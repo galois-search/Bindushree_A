@@ -1,0 +1,205 @@
+import numpy as np
+import time
+
+def get_psl(seq):
+    """Calculates true integer Periodic PSL (Maximum Sidelobe)."""
+    n = len(seq)
+    # Using FFT for O(N log N) correlation calculation
+    f = np.fft.fft(seq)
+    acf = np.round(np.real(np.fft.ifft(f * np.conj(f)))).astype(int)
+    # Return max absolute value of sidelobes (exclude index 0)
+    return np.max(np.abs(acf[1:n//2+1]))
+
+def generate_iz4_style_seed(N_total):
+    """
+    Generates an Interleaved Z4-style (NavIC) sequence.
+    Interleaves 5 sub-sequences to reach the target length N.
+    """
+    m = 5  # Standard NavIC interleaving factor
+    n_sub = N_total // m
+    if n_sub == 0: n_sub = 1
+    
+    sub_sequences = []
+    for j in range(m):
+        # Generate a balanced sub-component
+        # Using a shifted index to ensure diversity across branches
+        sub = np.ones(n_sub)
+        p = n_sub + 1
+        # Quick prime check for sub-component logic
+        is_p = all(p % i for i in range(2, int(p**0.5) + 1))
+        
+        for t in range(n_sub):
+            # Algebraic construction of the sub-branch
+            if is_p:
+                val = (pow(3, t + j, p)) % p
+                sub[t] = 1 if pow(val, (p-1)//2, p) == 1 else -1
+            else:
+                # Fallback for non-prime sub-lengths
+                sub[t] = 1 if (t + j) % 2 == 0 else -1
+        
+        # NavIC Sign-Flip logic: alternates polarity to balance DC offset
+        if j % 2 == 0:
+            sub = -sub
+        sub_sequences.append(sub)
+    
+    # Interleaving (M-way Interleave)
+    iz4_seq = np.zeros(N_total)
+    for i in range(n_sub):
+        for j in range(m):
+            if (i * m + j) < N_total:
+                iz4_seq[i * m + j] = sub_sequences[j][i]
+                
+    # Fill any remainder bits if N is not divisible by 5
+    remaining = N_total % m
+    if remaining > 0:
+        for r in range(remaining):
+            iz4_seq[-(r+1)] = 1 if r % 2 == 0 else -1
+            
+    return iz4_seq
+
+def save_dual_report(filename, n, init_seq, opt_seq, init_psl, opt_psl):
+    """Saves both sequences and their PSLs to a detailed report."""
+    def to_grid(arr):
+        bin_str = "".join(['1' if x > 0 else '0' for x in arr])
+        # Wraps text every 100 characters for readability
+        return "\n".join([f"[{i:05d}] {bin_str[i:i+100]}" for i in range(0, len(bin_str), 100)])
+
+    with open(filename, 'w') as f:
+        f.write("="*80 + "\n")
+        f.write("NavIC-IZ4 ARCHITECTURE OPTIMIZATION REPORT\n")
+        f.write(f"Sequence Length (N): {n}\n")
+        f.write(f"Initial IZ4 PSL:     {init_psl}\n")
+        f.write(f"Final Optimized PSL: {opt_psl}\n")
+        f.write(f"Improvement:         {init_psl - opt_psl} units\n")
+        f.write("="*80 + "\n\n")
+
+        f.write("INITIAL IZ4 SEQUENCE (AS GENERATED):\n" + "-"*35 + "\n")
+        f.write(to_grid(init_seq))
+        f.write("\n\n" + "="*80 + "\n\n")
+
+        f.write("OPTIMIZED SEQUENCE (BREST-BOSKOVIC RESULT):\n" + "-"*40 + "\n")
+        f.write(to_grid(opt_seq))
+    
+    print(f"\nFinal report successfully saved to: {filename}")
+
+def main():
+    # 1. User Input
+    print("--- NavIC IZ4 Sequence Optimizer ---")
+    try:
+        n = int(input("Enter desired Sequence Length (N): "))
+    except ValueError:
+        print("Invalid input. Defaulting to 10230.")
+        n = 10230
+
+    # 2. Seed Generation
+    print(f"\n[1/3] Generating IZ4-style seed for N={n}...")
+    initial_seq = generate_iz4_style_seed(n)
+    init_psl = get_psl(initial_seq)
+    print(f"Initial Seed PSL: {init_psl}")
+
+    # 3. Optimization Setup
+    seq = initial_seq.copy()
+    # Pre-calculate ACF for the recursive update (Brest-Boskovic efficiency)
+    f = np.fft.fft(seq)
+    acf = np.round(np.real(np.fft.ifft(f * np.conj(f)))).astype(float)
+    
+    best_seq = seq.copy()
+    best_psl = init_psl
+    gamma = 4.0  # L-p Norm factor
+    start_time = time.time()
+    
+    print(f"\n[2/3] Starting Brest-Boskovic Optimization (Time limit: 15 mins)...")
+
+    # 4. Optimization Loop
+    # We use a massive step count, but the time limit is the primary exit
+    for step in range(1, 2000000):
+        idx = np.random.randint(0, n)
+        old_val = seq[idx]
+        new_val = -old_val
+
+        # Efficient O(N) update of the Auto-Correlation Function
+        diff = new_val - old_val
+        indices_minus = (idx - np.arange(n)) % n
+        indices_plus = (idx + np.arange(n)) % n
+        delta = diff * (seq[indices_minus] + seq[indices_plus])
+
+        test_acf = acf + delta
+        
+        # Energy calculation using L-p Norm to prioritize peak reduction
+        curr_energy = np.sum(np.abs(acf[1:n//2+1])**gamma)
+        new_energy = np.sum(np.abs(test_acf[1:n//2+1])**gamma)
+
+        if new_energy < curr_energy:
+            seq[idx] = new_val
+            acf = test_acf
+            curr_psl = np.max(np.abs(acf[1:n//2+1]))
+
+            if curr_psl < best_psl:
+                best_psl = int(curr_psl)
+                best_seq = seq.copy()
+                # Dynamically sharpen the focus on the highest peaks
+                gamma = min(25, gamma + 0.2)
+                print(f"Step {step:06d} | New Best PSL: {best_psl} | Time: {time.time()-start_time:.1f}s")
+
+                # Stop if we hit the mathematical "Gold Standard"
+                if best_psl <= np.sqrt(n):
+                    print("Reached theoretical square-root bound!")
+                    break
+
+        # Safety break to prevent infinite hang on extremely large N
+        if time.time() - start_time > 900: 
+            print("Time limit (15m) reached.")
+            break
+
+    # 5. Output and Reporting
+    print(f"\n[3/3] Optimization Complete.")
+    final_psl = get_psl(best_seq)
+    filename = f"IZ4_Report_N{n}.txt"
+    save_dual_report(filename, n, initial_seq, best_seq, init_psl, final_psl)
+
+if __name__ == "__main__":
+    main()
+    
+    
+    output:
+    
+    ================================================================================
+NavIC-IZ4 ARCHITECTURE OPTIMIZATION REPORT
+Sequence Length (N): 100
+Initial IZ4 PSL:     100
+Final Optimized PSL: 8
+Improvement:         92 units
+================================================================================
+
+INITIAL IZ4 SEQUENCE (AS GENERATED):
+-----------------------------------
+[00000] 0000011111000001111100000111110000011111000001111100000111110000011111000001111100000111110000011111
+
+================================================================================
+
+OPTIMIZED SEQUENCE (BREST-BOSKOVIC RESULT):
+----------------------------------------
+[00000] 1010111011001110011100100010011010001101000011111010110100100010001100010000011101000001000001100001
+
+
+output:
+
+================================================================================
+NavIC-IZ4 ARCHITECTURE OPTIMIZATION REPORT
+Sequence Length (N): 200
+Initial IZ4 PSL:     200
+Final Optimized PSL: 16
+Improvement:         184 units
+================================================================================
+
+INITIAL IZ4 SEQUENCE (AS GENERATED):
+-----------------------------------
+[00000] 0000011111000001111100000111110000011111000001111100000111110000011111000001111100000111110000011111
+[00100] 0000011111000001111100000111110000011111000001111100000111110000011111000001111100000111110000011111
+
+================================================================================
+
+OPTIMIZED SEQUENCE (BREST-BOSKOVIC RESULT):
+----------------------------------------
+[00000] 0011110111100110100010110000010000001110111010010100110000010001101110100001111001000010000010001100
+[00100] 0010100110111011111100101000110000011011000001000100001001111011100100101010111010000111011011110110
