@@ -1,0 +1,117 @@
+import numpy as np
+import time
+
+def get_clean_psl(seq):
+    """Calculates true integer periodic PSL."""
+    n = len(seq)
+    f = np.fft.fft(seq)
+    # The Wiener-Khinchin result
+    acf = np.round(np.real(np.fft.ifft(f * np.conj(f)))).astype(int)
+    # PSL is the max of the sidelobes (excluding the main lobe at index 0)
+    return np.max(np.abs(acf[1:]))
+
+def generate_weil_seed(n, shift=5):
+    def is_prime(num):
+        if num < 2: return False
+        for i in range(2, int(num**0.5) + 1):
+            if num % i == 0: return False
+        return True
+
+    p = n
+    while not is_prime(p): p += 1
+
+    legendre = np.ones(p)
+    for i in range(1, p):
+        if pow(i, (p - 1) // 2, p) != 1: legendre[i] = -1
+    
+    # Correct Weil Construction
+    weil = legendre * np.roll(legendre, -shift)
+    return weil[:n].astype(np.float64)
+
+def optimize_weil_report(n):
+    # 1. Start with Weil
+    initial_seq = generate_weil_seed(n, shift=511 if n > 1000 else 5)
+    
+    # Calculate initial ACF correctly
+    f = np.fft.fft(initial_seq)
+    # Normalize and round to get actual integer correlation values
+    acf = np.round(np.real(np.fft.ifft(f * np.conj(f)))).astype(float)
+    
+    init_psl = np.max(np.abs(acf[1:].astype(int)))
+    best_psl = init_psl
+    seq = initial_seq.copy()
+    best_seq = initial_seq.copy()
+    
+    print(f"--- Optimization for N={n} ---")
+    print(f"Initial PSL: {init_psl}")
+
+    gamma = 4.0
+    start_time = time.time()
+    
+    # 2. Optimization Loop
+    for step in range(1, 1000000):
+        idx = np.random.randint(0, n)
+        old_val = seq[idx]
+        new_val = -old_val
+
+        # O(N) Update
+        diff = new_val - old_val
+        indices_minus = (idx - np.arange(n)) % n
+        indices_plus = (idx + np.arange(n)) % n
+        delta = diff * (seq[indices_minus] + seq[indices_plus])
+
+        test_acf = acf + delta
+        
+        # Energy Function
+        curr_e = np.sum(np.abs(acf[1:])**gamma)
+        new_e = np.sum(np.abs(test_acf[1:])**gamma)
+
+        if new_e < curr_e:
+            seq[idx] = new_val
+            acf = test_acf
+            curr_psl = np.max(np.abs(acf[1:].astype(int)))
+            
+            if curr_psl < best_psl:
+                best_psl = curr_psl
+                best_seq = seq.copy()
+                gamma = min(15, gamma + 0.1)
+                print(f"Step {step} | PSL: {best_psl} | Time: {time.time()-start_time:.1f}s")
+                
+                if best_psl <= np.sqrt(n): break
+
+        if time.time() - start_time > 600: # 10 min cap for this test
+            break
+
+    # 3. SAVE TO FILE
+    filename = f"Report_N{n}_PSL{best_psl}.txt"
+    with open(filename, "w") as f:
+        f.write(f"Sequence Length: {n}\n")
+        f.write(f"Initial PSL: {init_psl}\n")
+        f.write(f"Final PSL: {best_psl}\n\n")
+        f.write("OPTIMIZED SEQUENCE (1/0):\n")
+        f.write("".join(['1' if x > 0 else '0' for x in best_seq]))
+    
+    print(f"Report saved to {filename}")
+    return best_psl
+
+if __name__ == "__main__":
+    val = int(input("Enter Length: "))
+    optimize_weil_report(val)
+    
+    output:
+    
+    Sequence Length: 100
+Initial PSL: 32
+Final PSL: 8
+
+OPTIMIZED SEQUENCE (1/0):
+1100110101000010110001100101000001010011010000111010010001000110000101110000110110110010011010101111
+
+
+output:
+Sequence Length: 1023
+Initial PSL: 87
+Final PSL: 33
+
+OPTIMIZED SEQUENCE (1/0):
+010001000100100010000000000000001011001100010100100101111101101011001110110000110010010000010110000011011100111101000000001110000100000111110000011000101001100000101010100101110101111010000110101101101100001010011111100101010100110101010100010110100001011101100010011011000011110111110100110000010101000111101100011000010111001101111000101011000111010011110001001011001110001000010101110000011000110000010001011111010100100000110100110100000110010100111011110001101111010010110000011001101001110000001010101011110011000110110000111010110010101100000011101010101110111001010011011111010110011100011101101010110100100110010010100010011100110010011101111001101101000110011101100001000011100101010110110001001010100001111101101000010011000010100111101111101111111000010011110110001000101010001000111101110111010111111101100000001010010101101110110111010000001000100010101110000011011100011011001100110110000100011101100100111001011101101000101001100101010011101011110001110001101000111010011101101101111111000000111111011001011

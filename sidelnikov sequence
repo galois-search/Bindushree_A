@@ -1,0 +1,236 @@
+import numpy as np
+import time
+
+def get_psl(seq):
+    """Calculates true integer Periodic PSL."""
+    n = len(seq)
+    f = np.fft.fft(seq)
+    acf = np.round(np.real(np.fft.ifft(f * np.conj(f)))).astype(int)
+    return np.max(np.abs(acf[1:n//2+1]))
+
+def get_sidelnikov_seed(n):
+    """
+    Generates a Sidelnikov (SLCE) sequence.
+    Length N requires a prime p = N + 1.
+    """
+    p = n + 1
+    # Check if n+1 is prime for Sidelnikov construction
+    is_prime = all(p % i for i in range(2, int(p**0.5) + 1))
+    if not is_prime:
+        print(f"Note: {p} is not prime. Sidelnikov works best for p=N+1.")
+        # We find the nearest prime to keep the math valid
+        p_orig = p
+        while not all(p % i for i in range(2, int(p**0.5) + 1)): p += 1
+    
+    # Find a primitive root alpha for p
+    def get_primitive_root(p_val):
+        for res in range(2, p_val):
+            # Check a few factors to ensure it's a generator
+            if pow(res, p_val-1, p_val) == 1:
+                return res
+        return 3
+
+    alpha = get_primitive_root(p)
+    seq = np.ones(n)
+    
+    # Construction: s(t) = 1 if (alpha^t + 1) is a non-residue mod p
+    # This is the classic Sidelnikov mapping
+    for t in range(n):
+        val = (pow(alpha, t, p) + 1) % p
+        if val == 0:
+            seq[t] = 1
+        elif pow(val, (p-1)//2, p) != 1: # Quadratic Non-Residue
+            seq[t] = -1
+        else:
+            seq[t] = 1
+    return seq[:n]
+
+def save_dual_report(filename, n, init_seq, opt_seq, init_psl, opt_psl):
+    """Saves both sequences with their PSLs to a text document."""
+    def to_grid(arr):
+        bin_str = "".join(['1' if x > 0 else '0' for x in arr])
+        return "\n".join([f"[{i:05d}] {bin_str[i:i+100]}" for i in range(0, len(bin_str), 100)])
+
+    with open(filename, 'w') as f:
+        f.write("="*80 + "\n")
+        f.write("SIDELNIKOV-BREST-BOSKOVIC OPTIMIZATION REPORT\n")
+        f.write(f"Sequence Length (N): {n}\n")
+        f.write(f"Initial Sidelnikov PSL: {init_psl}\n")
+        f.write(f"Final Optimized PSL:    {opt_psl}\n")
+        f.write("="*80 + "\n\n")
+
+        f.write("INITIAL SIDELNIKOV SEQUENCE:\n" + "-"*30 + "\n")
+        f.write(to_grid(init_seq))
+        f.write("\n\n" + "="*80 + "\n\n")
+
+        f.write("OPTIMIZED SEQUENCE:\n" + "-"*30 + "\n")
+        f.write(to_grid(opt_seq))
+    
+    print(f"\nReport saved to: {filename}")
+
+def main():
+    # 1. User Inputs
+    try:
+        n = int(input("Enter Sequence Length (e.g., 10230): "))
+    except ValueError:
+        n = 10230
+
+    print(f"Building Sidelnikov Seed for N={n}...")
+    initial_seq = get_sidelnikov_seed(n).astype(np.float64)
+    init_psl = get_psl(initial_seq)
+    
+    # 2. Optimization Setup
+    seq = initial_seq.copy()
+    f = np.fft.fft(seq)
+    acf = np.round(np.real(np.fft.ifft(f * np.conj(f)))).astype(float)
+    
+    best_seq = seq.copy()
+    best_psl = init_psl
+    gamma = 4.0
+    start_time = time.time()
+
+    print(f"Initial PSL: {init_psl} | Optimization started...")
+
+    # 3. Brest-Boskovic Loop
+    for step in range(1, 1000001):
+        idx = np.random.randint(0, n)
+        old_val = seq[idx]
+        new_val = -old_val
+
+        # O(N) Recursive Update
+        diff = new_val - old_val
+        indices_minus = (idx - np.arange(n)) % n
+        indices_plus = (idx + np.arange(n)) % n
+        delta = diff * (seq[indices_minus] + seq[indices_plus])
+
+        test_acf = acf + delta
+        
+        # Energy Function (L-p Norm)
+        curr_energy = np.sum(np.abs(acf[1:n//2+1])**gamma)
+        new_energy = np.sum(np.abs(test_acf[1:n//2+1])**gamma)
+
+        if new_energy < curr_energy:
+            seq[idx] = new_val
+            acf = test_acf
+            curr_psl = np.max(np.abs(acf[1:n//2+1]))
+
+            if curr_psl < best_psl:
+                best_psl = int(curr_psl)
+                best_seq = seq.copy()
+                gamma = min(20, gamma + 0.1) # Focus on peaks
+                print(f"Step {step:06d} | PSL: {best_psl} | Time: {time.time()-start_time:.1f}s")
+
+                if best_psl <= np.sqrt(n): break
+
+        # 20-minute limit for the user session
+        if time.time() - start_time > 1200:
+            print("Time limit reached.")
+            break
+
+    # 4. Final Verification and Save
+    final_psl = get_psl(best_seq)
+    filename = f"Sidelnikov_Report_N{n}.txt"
+    save_dual_report(filename, n, initial_seq, best_seq, init_psl, final_psl)
+
+if __name__ == "__main__":
+    main()
+    
+    
+    output:
+    
+    ================================================================================
+SIDELNIKOV-BREST-BOSKOVIC OPTIMIZATION REPORT
+Sequence Length (N): 100
+Initial Sidelnikov PSL: 4
+Final Optimized PSL:    4
+================================================================================
+
+INITIAL SIDELNIKOV SEQUENCE:
+------------------------------
+[00000] 0011111000000011010010111010100001101101100100010011000100011000111001011111101111000011010101101011
+
+================================================================================
+
+OPTIMIZED SEQUENCE:
+------------------------------
+[00000] 0011111000000011010010111010100001101101100100010011000100011000111001011111101111000011010101101011
+
+
+output:
+
+================================================================================
+SIDELNIKOV-BREST-BOSKOVIC OPTIMIZATION REPORT
+Sequence Length (N): 1023
+Initial Sidelnikov PSL: 507
+Final Optimized PSL:    39
+================================================================================
+
+INITIAL SIDELNIKOV SEQUENCE:
+------------------------------
+[00000] 1111011100000011101011001111011010000100000111101110011100111010111110101001001101001010100100011110
+[00100] 0110110010101010010011100000111011111101000010100110000001000100110100110110100000001100010101010111
+[00200] 0000011110101001110010110111101111100010001111000010110010010011010000111100010001111101111011010011
+[00300] 1001010111100000111010101010001100000001011011001011001000100000011001010000101111110111000001110010
+[00400] 0101010100110110011110001001010100101100100101011111010111001110011101111000001000010110111100110101
+[00500] 1100000011101111111011100000011101011001111011010000100000111101110011100111010111110101001001101001
+[00600] 0101001000111100110110010101010010011100000111011111101000010100110000001000100110100110110100000001
+[00700] 1000101010101110000011110101001110010110111101111100010001111000010110010010011010000111100010001111
+[00800] 1011110110100111001010111100000111010101010001100000001011011001011001000100000011001010000101111110
+[00900] 1110000011100100101010100110110011110001001010100101100100101011111010111001110011101111000001000010
+[01000] 11011110011010111000000
+
+================================================================================
+
+OPTIMIZED SEQUENCE:
+------------------------------
+[00000] 1101000010010010101011111001011001000100010011011010011101111000110110001101001101001011001100001000
+[00100] 1010011111111100000010110110111011111101001010100110100001001000110101110010100010100100010100010001
+[00200] 0000011100100001101101110000001111100011111101001011110010000011000100100110010100110111100000010001
+[00300] 0001010011100001111100101000001100001001110111001010101010111010011101010010001011100011000001110010
+[00400] 0101010101111010001110000000000010101110000001011111110111001100011101111000001000011110110100111011
+[00500] 0000011011101111011111100000011001011001111011010000000000111101110010001010010010111100000100101001
+[00600] 0101001000111110110110011000010010011000001001001101101100011010110000001000111100110100110100001001
+[00700] 1000111000001100000011010101001010010111101101000100010101111000010110010111111011000111100110001111
+[00800] 1010110110100100001110101101010001110100011001100000011011010110010001001001010111011010010011101001
+[00900] 1000000101111100101011000100110011111101001100110001101100111011111010111000110111010000001111000110
+[01000] 11001110011010111000000
+
+output:
+
+================================================================================
+SIDELNIKOV-BREST-BOSKOVIC OPTIMIZATION REPORT
+Sequence Length (N): 200
+Initial Sidelnikov PSL: 28
+Final Optimized PSL:    12
+================================================================================
+
+INITIAL SIDELNIKOV SEQUENCE:
+------------------------------
+[00000] 0011001010010001001001111000001011001011000101110101010111000110111001010011101011111001110100011110
+[00100] 1010010111111010010000100110101111101100000110111001001000000000100001001111001111010110100111000100
+
+================================================================================
+
+OPTIMIZED SEQUENCE:
+------------------------------
+[00000] 0011000010010001001001101010001111001011000101111101010111000110111001010011101011111100110000011110
+[00100] 1010111111111000010000100110101111101100000110111001001000001011110011001111011111010110100111000001
+
+
+output:
+================================================================================
+SIDELNIKOV-BREST-BOSKOVIC OPTIMIZATION REPORT
+Sequence Length (N): 40
+Initial Sidelnikov PSL: 40
+Final Optimized PSL:    4
+================================================================================
+
+INITIAL SIDELNIKOV SEQUENCE:
+------------------------------
+[00000] 1011010001110001011010110100011100010110
+
+================================================================================
+
+OPTIMIZED SEQUENCE:
+------------------------------
+[00000] 1111010000110000111110110011010111010110
