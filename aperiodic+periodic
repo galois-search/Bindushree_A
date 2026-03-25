@@ -1,0 +1,59 @@
+import numpy as np
+
+
+def calculate_autocorrelation():
+    # 1. Get user input
+    raw_input = input("Enter your binary sequence (e.g., 1101000): ").strip()
+
+    # 2. Convert to Bipolar (0 -> 1, 1 -> -1)
+    # This ensures the math works for signal processing
+    seq = np.array([1 if b == '0' else -1 for b in raw_input])
+    N = len(seq)
+
+    print(f"\nSequence Length (N): {N}")
+    print(f"Bipolar Mapping: {seq}")
+    print("-" * 50)
+
+    # 3. Calculate Aperiodic ACR (C)
+    # We calculate for lags 0 to N-1
+    aperiodic_acr = []
+    for k in range(N):
+        # Slice the sequence and its shifted version
+        overlap_1 = seq[k:]
+        overlap_2 = seq[:N - k]
+        corr = np.sum(overlap_1 * overlap_2)
+        aperiodic_acr.append(corr)
+
+    # 4. Calculate Periodic ACR (R)
+    periodic_acr = []
+    for k in range(N):
+        # Use np.roll to simulate the 'Hula Hoop' wrap-around
+        shifted_seq = np.roll(seq, k)
+        corr = np.sum(seq * shifted_seq)
+        periodic_acr.append(corr)
+
+    # 5. Display Results in a Table
+    print(f"{'Lag (k)':<10} | {'Aperiodic (C)':<15} | {'Periodic (R)':<15} | {'Check (Ck + CN-k)'}")
+    print("-" * 65)
+
+    for k in range(N):
+        ck = aperiodic_acr[k]
+        # C(k-N) is equivalent to C(N-k) due to symmetry
+        cn_k = aperiodic_acr[N - k] if k > 0 else 0
+
+        periodic_val = periodic_acr[k]
+        check_val = ck + cn_k
+
+        print(f"{k:<10} | {ck:<15} | {periodic_val:<15} | {check_val}")
+
+    # 6. Summary of Peaks
+    max_aperiodic_sidelobe = max([abs(x) for x in aperiodic_acr[1:]])
+    max_periodic_sidelobe = max([abs(x) for x in periodic_acr[1:]])
+
+    print("-" * 50)
+    print(f"Max Aperiodic Sidelobe: {max_aperiodic_sidelobe}")
+    print(f"Max Periodic Sidelobe:  {max_periodic_sidelobe}")
+
+
+if __name__ == "__main__":
+    calculate_autocorrelation()
