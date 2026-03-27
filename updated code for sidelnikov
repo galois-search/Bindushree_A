@@ -1,0 +1,416 @@
+UPDATED CODES WITH ALL FOUR METHODS FOR SIDELNIKOV
+
+Brest boskovic
+
+import numpy as np
+import os
+
+def get_best_sidelnikov_seed(n):
+    def is_prime(num):
+        if num < 2: return False
+        for i in range(2, int(num**0.5) + 1):
+            if num % i == 0: return False
+        return True
+    def get_primitive_roots(p):
+        roots = []; phi = p - 1; temp = phi; factors = []; d = 2
+        while d * d <= temp:
+            if temp % d == 0:
+                factors.append(d)
+                while temp % d == 0: temp //= d
+            d += 1
+        if temp > 1: factors.append(temp)
+        for res in range(2, p):
+            ok = True
+            for f in factors:
+                if pow(res, phi // f, p) == 1:
+                    ok = False; break
+            if ok: roots.append(res)
+        return roots
+
+    p = n
+    while not is_prime(p): p += 1
+    all_roots = get_primitive_roots(p)
+    roots_to_scan = all_roots[:25]
+    
+    best_psl = float('inf'); best_seed = None; best_alpha = None
+    
+    for alpha in roots_to_scan:
+        s = np.ones(p)
+        log_table = {pow(alpha, i, p): i for i in range(p-1)}
+        for i in range(p-1):
+            val = (pow(alpha, i, p) + 1) % p
+            if val == 0: s[i] = -1
+            else:
+                exponent = log_table[val]
+                s[i] = 1 if (exponent % 2 == 0) else -1
+        
+        cand = np.roll(s[:n], n // 4)
+        f = np.fft.fft(cand); acf = np.round(np.real(np.fft.ifft(f*np.conj(f)))).astype(int)
+        curr_psl = int(np.max(np.abs(acf[1:n//2+1])))
+        if curr_psl < best_psl:
+            best_psl, best_seed, best_alpha = curr_psl, cand.astype(float), alpha
+            
+    return best_seed, p, best_alpha, n // 4
+
+def run_brest_boskovic():
+    n = int(input("Enter N: "))
+    seed, p, alpha, shift = get_best_sidelnikov_seed(n)
+    init_psl = int(np.max(np.abs(np.round(np.real(np.fft.ifft(np.fft.fft(seed)*np.conj(np.fft.fft(seed)))))[1:n//2+1])))
+    
+    seq = seed.copy(); best_seq = seed.copy(); best_psl = init_psl; gamma = 4.0
+    f_vec = np.fft.fft(seq); acf = np.round(np.real(np.fft.ifft(f_vec * np.conj(f_vec)))).astype(float)
+    
+    for step in range(1, 80001):
+        idx = np.random.randint(0, n)
+        diff = -2 * seq[idx]
+        delta = diff * (seq[(idx - np.arange(n)) % n] + seq[(idx + np.arange(n)) % n])
+        sl = slice(1, n // 2 + 1)
+        if np.sum(np.abs(acf[sl] + delta[sl])**gamma) < np.sum(np.abs(acf[sl])**gamma):
+            seq[idx] *= -1; acf += delta
+            curr_psl = int(np.max(np.abs(acf[sl])))
+            if curr_psl < best_psl:
+                best_psl, best_seq = curr_psl, seq.copy()
+                gamma = min(18, gamma + 0.1)
+
+    with open(f"Sidelnikov_Brest_N{n}.txt", "w") as f:
+        f.write(f"METHOD: BREST-BOSKOVIC\nN: {n} | Prime: {p} | Selected Alpha: {alpha}\n")
+        f.write(f"Initial PSL: {init_psl} | Final PSL: {best_psl}\n\n")
+        f.write("--- INITIAL SEQUENCE ---\n")
+        s_str = "".join(['1' if x > 0 else '0' for x in seed])
+        for i in range(0, len(s_str), 100): f.write(s_str[i:i+100] + "\n")
+        f.write("\n--- FINAL SEQUENCE ---\n")
+        b_str = "".join(['1' if x > 0 else '0' for x in best_seq])
+        for i in range(0, len(b_str), 100): f.write(b_str[i:i+100] + "\n")
+    print(f"Brest-Boskovic Done. Alpha used: {alpha}")
+
+if __name__ == "__main__": run_brest_boskovic()
+
+pecan+lns
+
+import numpy as np
+import os
+
+def get_best_sidelnikov_seed(n):
+    """
+    Unified Sidelnikov Generator:
+    Scans first 25 roots and picks the one with best starting PSL.
+    """
+    def is_prime(num):
+        if num < 2: return False
+        for i in range(2, int(num**0.5) + 1):
+            if num % i == 0: return False
+        return True
+
+    def get_primitive_roots(p):
+        roots = []; phi = p - 1; temp = phi; factors = []; d = 2
+        while d * d <= temp:
+            if temp % d == 0:
+                factors.append(d)
+                while temp % d == 0: temp //= d
+            d += 1
+        if temp > 1: factors.append(temp)
+        for res in range(2, p):
+            ok = True
+            for f in factors:
+                if pow(res, phi // f, p) == 1:
+                    ok = False; break
+            if ok: roots.append(res)
+        return roots
+
+    p = n
+    while not is_prime(p): p += 1
+    all_roots = get_primitive_roots(p)
+    roots_to_scan = all_roots[:25]
+    
+    best_psl = float('inf'); best_seed = None; best_alpha = None
+    
+    for alpha in roots_to_scan:
+        s = np.ones(p)
+        # Sidelnikov mapping: uses discrete log of (alpha^i + 1)
+        log_table = {pow(alpha, i, p): i for i in range(p-1)}
+        for i in range(p-1):
+            val = (pow(alpha, i, p) + 1) % p
+            if val == 0: s[i] = -1
+            else:
+                exponent = log_table[val]
+                s[i] = 1 if (exponent % 2 == 0) else -1
+        
+        cand = np.roll(s[:n], n // 4)
+        f = np.fft.fft(cand)
+        acf = np.round(np.real(np.fft.ifft(f * np.conj(f)))).astype(int)
+        curr_psl = int(np.max(np.abs(acf[1:n//2+1])))
+        if curr_psl < best_psl:
+            best_psl, best_seed, best_alpha = curr_psl, cand.astype(float), alpha
+            
+    return best_seed, p, best_alpha, n // 4
+
+def run_pecan_lns():
+    n = int(input("Enter N: "))
+    
+    # 1. Get Initial Sidelnikov
+    seed, p, alpha, shift = get_best_sidelnikov_seed(n)
+    init_f = np.fft.fft(seed)
+    init_psl = int(np.max(np.abs(np.round(np.real(np.fft.ifft(init_f * np.conj(init_f))))[1:n//2+1])))
+    
+    print(f"Optimal Alpha Found: {alpha} | Initial PSL: {init_psl}")
+
+    # 2. Optimization Logic
+    curr = seed.copy()
+    best_s = seed.copy()
+    best_psl = init_psl
+    stagnation = 0
+
+    for i in range(1, 1001):
+        S = np.fft.fft(curr)
+        S_ideal = np.sqrt(n) * np.exp(1j * np.angle(S))
+        s_cont = np.real(np.fft.ifft(S_ideal))
+        cand = np.where(s_cont >= 0, 1.0, -1.0)
+        
+        f_cand = np.fft.fft(cand)
+        c_psl = int(np.max(np.abs(np.round(np.real(np.fft.ifft(f_cand * np.conj(f_cand))))[1:n//2+1])))
+        
+        if c_psl < best_psl:
+            best_psl, best_s, stagnation = c_psl, cand.copy(), 0
+            print(f"  Iter {i} | PSL: {best_psl}")
+        else:
+            stagnation += 1
+        
+        # Local Neighborhood Search (Kick)
+        if stagnation > 50:
+            # Flip bits with lowest confidence (nearest to 0 in continuous domain)
+            cand[np.abs(s_cont) < np.percentile(np.abs(s_cont), 2)] *= -1
+            stagnation = 0
+        curr = cand
+
+    # 3. Report Generation
+    filename = f"Sidelnikov_PeCAN_N{n}.txt"
+    with open(filename, "w") as f:
+        f.write(f"METHOD: PECAN + LNS HYBRID\n")
+        f.write(f"N: {n} | Base Prime: {p} | Alpha (Primitive Root): {alpha}\n")
+        f.write(f"Initial PSL: {init_psl} | Final PSL: {best_psl}\n")
+        f.write("="*50 + "\n\n")
+        
+        f.write("--- INITIAL SEQUENCE (Sidelnikov Alpha {}) ---\n".format(alpha))
+        s_str = "".join(['1' if x > 0 else '0' for x in seed])
+        for i in range(0, len(s_str), 100): f.write(s_str[i:i+100] + "\n")
+        
+        f.write("\n--- FINAL OPTIMIZED SEQUENCE ---\n")
+        b_str = "".join(['1' if x > 0 else '0' for x in best_s])
+        for i in range(0, len(b_str), 100): f.write(b_str[i:i+100] + "\n")
+
+    print(f"Report Saved to: {filename}")
+
+if __name__ == "__main__":
+    run_pecan_lns()
+    
+    hybrid sa
+    
+    import numpy as np
+import math
+import os
+
+def get_best_sidelnikov_seed(n):
+    def is_prime(num):
+        if num < 2: return False
+        for i in range(2, int(num**0.5) + 1):
+            if num % i == 0: return False
+        return True
+
+    def get_primitive_roots(p):
+        roots = []; phi = p - 1; temp = phi; factors = []; d = 2
+        while d * d <= temp:
+            if temp % d == 0:
+                factors.append(d)
+                while temp % d == 0: temp //= d
+            d += 1
+        if temp > 1: factors.append(temp)
+        for res in range(2, p):
+            ok = True
+            for f in factors:
+                if pow(res, phi // f, p) == 1:
+                    ok = False; break
+            if ok: roots.append(res)
+        return roots
+
+    p = n
+    while not is_prime(p): p += 1
+    all_roots = get_primitive_roots(p)
+    roots_to_scan = all_roots[:25]
+    
+    best_psl = float('inf'); best_seed = None; best_alpha = None
+    
+    for alpha in roots_to_scan:
+        s = np.ones(p)
+        log_table = {pow(alpha, i, p): i for i in range(p-1)}
+        for i in range(p-1):
+            val = (pow(alpha, i, p) + 1) % p
+            if val == 0: s[i] = -1
+            else:
+                exponent = log_table[val]
+                s[i] = 1 if (exponent % 2 == 0) else -1
+        
+        cand = np.roll(s[:n], n // 4)
+        f = np.fft.fft(cand)
+        acf = np.round(np.real(np.fft.ifft(f * np.conj(f)))).astype(int)
+        curr_psl = int(np.max(np.abs(acf[1:n//2+1])))
+        if curr_psl < best_psl:
+            best_psl, best_seed, best_alpha = curr_psl, cand.astype(float), alpha
+            
+    return best_seed, p, best_alpha, n // 4
+
+def run_hybrid_sa():
+    n = int(input("Enter N: "))
+    seed, p, alpha, shift = get_best_sidelnikov_seed(n)
+    
+    def get_psl(x):
+        f = np.fft.fft(x)
+        acf = np.round(np.real(np.fft.ifft(f * np.conj(f)))).astype(int)
+        return int(np.max(np.abs(acf[1:n//2+1])))
+
+    init_psl = get_psl(seed)
+    curr = seed.copy(); cur_psl = init_psl
+    best_s = seed.copy(); best_psl = init_psl
+    temp = 35.0
+
+    print(f"Optimal Alpha: {alpha} | Initial PSL: {init_psl}")
+
+    for i in range(20000):
+        new = curr.copy()
+        # Single bit flip
+        new[np.random.randint(n)] *= -1
+        
+        n_psl = get_psl(new)
+        delta = n_psl - cur_psl
+        
+        # Metropolis Criterion
+        if delta < 0 or np.random.rand() < math.exp(-delta/temp):
+            curr, cur_psl = new, n_psl
+            if cur_psl < best_psl:
+                best_psl, best_s = cur_psl, curr.copy()
+                print(f"  SA Iter {i} | PSL: {best_psl}")
+        temp *= 0.9997
+
+    filename = f"Sidelnikov_SA_N{n}.txt"
+    with open(filename, "w") as f:
+        f.write(f"METHOD: HYBRID SIMULATED ANNEALING\n")
+        f.write(f"N: {n} | Base Prime: {p} | Alpha: {alpha}\n")
+        f.write(f"Initial PSL: {init_psl} | Final PSL: {best_psl}\n\n")
+        f.write("--- INITIAL SEQUENCE ---\n")
+        s_str = "".join(['1' if x > 0 else '0' for x in seed])
+        for i in range(0, len(s_str), 100): f.write(s_str[i:i+100] + "\n")
+        f.write("\n--- FINAL OPTIMIZED SEQUENCE ---\n")
+        b_str = "".join(['1' if x > 0 else '0' for x in best_s])
+        for i in range(0, len(b_str), 100): f.write(b_str[i:i+100] + "\n")
+    print(f"Report Saved: {filename}")
+
+if __name__ == "__main__":
+    run_hybrid_sa()
+    
+    ga
+    
+    import numpy as np
+import os
+
+def get_best_sidelnikov_seed(n):
+    def is_prime(num):
+        if num < 2: return False
+        for i in range(2, int(num**0.5) + 1):
+            if num % i == 0: return False
+        return True
+
+    def get_primitive_roots(p):
+        roots = []; phi = p - 1; temp = phi; factors = []; d = 2
+        while d * d <= temp:
+            if temp % d == 0:
+                factors.append(d)
+                while temp % d == 0: temp //= d
+            d += 1
+        if temp > 1: factors.append(temp)
+        for res in range(2, p):
+            ok = True
+            for f in factors:
+                if pow(res, phi // f, p) == 1:
+                    ok = False; break
+            if ok: roots.append(res)
+        return roots
+
+    p = n
+    while not is_prime(p): p += 1
+    all_roots = get_primitive_roots(p)
+    roots_to_scan = all_roots[:25]
+    
+    best_psl = float('inf'); best_seed = None; best_alpha = None
+    
+    for alpha in roots_to_scan:
+        s = np.ones(p)
+        log_table = {pow(alpha, i, p): i for i in range(p-1)}
+        for i in range(p-1):
+            val = (pow(alpha, i, p) + 1) % p
+            if val == 0: s[i] = -1
+            else:
+                exponent = log_table[val]
+                s[i] = 1 if (exponent % 2 == 0) else -1
+        
+        cand = np.roll(s[:n], n // 4)
+        f = np.fft.fft(cand)
+        acf = np.round(np.real(np.fft.ifft(f * np.conj(f)))).astype(int)
+        curr_psl = int(np.max(np.abs(acf[1:n//2+1])))
+        if curr_psl < best_psl:
+            best_psl, best_seed, best_alpha = curr_psl, cand.astype(float), alpha
+            
+    return best_seed, p, best_alpha, n // 4
+
+def run_ga():
+    n = int(input("Enter N: "))
+    seed, p, alpha, shift = get_best_sidelnikov_seed(n)
+    
+    def get_psl(x):
+        f = np.fft.fft(x)
+        acf = np.round(np.real(np.fft.ifft(f * np.conj(f)))).astype(int)
+        return int(np.max(np.abs(acf[1:n//2+1])))
+
+    init_psl = get_psl(seed)
+    print(f"Optimal Alpha: {alpha} | Initial PSL: {init_psl}")
+
+    # Initialization: Variety of rotations of the best seed
+    pop_size = 12
+    population = [np.roll(seed, i*3) for i in range(pop_size)]
+    
+    for gen in range(60):
+        # Sort by PSL
+        population.sort(key=get_psl)
+        top_psl = get_psl(population[0])
+        print(f"  Gen {gen} | Best PSL: {top_psl}")
+        
+        next_gen = population[:2] # Elitism (keep top 2)
+        
+        while len(next_gen) < pop_size:
+            # Crossover
+            p1, p2 = population[0], population[np.random.randint(1, 5)]
+            cp = np.random.randint(n)
+            child = np.concatenate([p1[:cp], p2[cp:]])
+            
+            # Mutation
+            if np.random.rand() < 0.15:
+                child[np.random.randint(n)] *= -1
+            next_gen.append(child)
+        population = next_gen
+
+    final_seq = population[0]
+    final_psl = get_psl(final_seq)
+
+    filename = f"Sidelnikov_GA_N{n}.txt"
+    with open(filename, "w") as f:
+        f.write(f"METHOD: GENETIC ALGORITHM\n")
+        f.write(f"N: {n} | Base Prime: {p} | Alpha: {alpha}\n")
+        f.write(f"Initial PSL: {init_psl} | Final PSL: {final_psl}\n\n")
+        f.write("--- INITIAL SEQUENCE ---\n")
+        s_str = "".join(['1' if x > 0 else '0' for x in seed])
+        for i in range(0, len(s_str), 100): f.write(s_str[i:i+100] + "\n")
+        f.write("\n--- FINAL OPTIMIZED SEQUENCE ---\n")
+        b_str = "".join(['1' if x > 0 else '0' for x in final_seq])
+        for i in range(0, len(b_str), 100): f.write(b_str[i:i+100] + "\n")
+    print(f"Report Saved: {filename}")
+
+if __name__ == "__main__":
+    run_ga()

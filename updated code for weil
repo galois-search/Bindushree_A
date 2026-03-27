@@ -1,0 +1,299 @@
+Bresr-boskovic:
+
+import numpy as np
+import os
+
+def get_best_weil_seed(n):
+    def is_prime(num):
+        if num < 2: return False
+        for i in range(2, int(num**0.5) + 1):
+            if num % i == 0: return False
+        return True
+    def get_primitive_roots(p):
+        roots = []; phi = p - 1; temp = phi; factors = []; d = 2
+        while d * d <= temp:
+            if temp % d == 0:
+                factors.append(d)
+                while temp % d == 0: temp //= d
+            d += 1
+        if temp > 1: factors.append(temp)
+        for res in range(2, p):
+            ok = True
+            for f in factors:
+                if pow(res, phi // f, p) == 1:
+                    ok = False; break
+            if ok: roots.append(res)
+        return roots
+    p = n
+    while not is_prime(p): p += 1
+    roots = get_primitive_roots(p)
+    best_psl = float('inf'); best_seed = None; best_g = None
+    for g in roots:
+        s = np.ones(p)
+        for i in range(p):
+            val = (pow(i, g, p) + 1) % p
+            s[i] = 1 if (val == 0 or pow(val, (p - 1) // 2, p) == 1) else -1
+        cand = np.roll(s[:n], n // 4)
+        curr_psl = int(np.max(np.abs(np.round(np.real(np.fft.ifft(np.fft.fft(cand)*np.conj(np.fft.fft(cand)))))[1:n//2+1])))
+        if curr_psl < best_psl:
+            best_psl, best_seed, best_g = curr_psl, cand.astype(float), g
+    return best_seed, p, best_g, n // 4
+
+def run_brest_boskovic():
+    n = int(input("Enter N: "))
+    seed, p, g, shift = get_best_weil_seed(n)
+    init_psl = int(np.max(np.abs(np.round(np.real(np.fft.ifft(np.fft.fft(seed)*np.conj(np.fft.fft(seed)))))[1:n//2+1])))
+    
+    seq = seed.copy(); best_seq = seed.copy(); best_psl = init_psl; gamma = 4.0
+    f_vec = np.fft.fft(seq); acf = np.round(np.real(np.fft.ifft(f_vec * np.conj(f_vec)))).astype(float)
+    
+    for step in range(1, 100001):
+        idx = np.random.randint(0, n)
+        diff = -2 * seq[idx]
+        delta = diff * (seq[(idx - np.arange(n)) % n] + seq[(idx + np.arange(n)) % n])
+        sl = slice(1, n // 2 + 1)
+        if np.sum(np.abs(acf[sl] + delta[sl])**gamma) < np.sum(np.abs(acf[sl])**gamma):
+            seq[idx] *= -1; acf += delta
+            curr_psl = int(np.max(np.abs(acf[sl])))
+            if curr_psl < best_psl:
+                best_psl, best_seq = curr_psl, seq.copy()
+                gamma = min(18, gamma + 0.1)
+                print(f"Step {step} | PSL: {best_psl}")
+
+    with open(f"Brest_Weil_N{n}.txt", "w") as f:
+        f.write(f"BREST-BOSKOVIC | N={n} | Prime={p} | Root={g} | Shift={shift}\n")
+        f.write(f"Initial PSL: {init_psl} | Final PSL: {best_psl}\n\n")
+        f.write("--- INITIAL WEIL ---\n")
+        s_str = "".join(['1' if x > 0 else '0' for x in seed])
+        for i in range(0, len(s_str), 100): f.write(s_str[i:i+100] + "\n")
+        f.write("\n--- OPTIMIZED ---\n")
+        b_str = "".join(['1' if x > 0 else '0' for x in best_seq])
+        for i in range(0, len(b_str), 100): f.write(b_str[i:i+100] + "\n")
+    print(f"Saved: Brest_Weil_N{n}.txt")
+
+if __name__ == "__main__": run_brest_boskovic()
+
+
+pecan+lns
+
+import numpy as np
+import os
+
+def get_best_weil_seed(n):
+    # [Exactly same get_best_weil_seed logic as Method 1]
+    def is_prime(num):
+        if num < 2: return False
+        for i in range(2, int(num**0.5) + 1):
+            if num % i == 0: return False
+        return True
+    def get_primitive_roots(p):
+        roots = []; phi = p - 1; temp = phi; factors = []; d = 2
+        while d * d <= temp:
+            if temp % d == 0:
+                factors.append(d)
+                while temp % d == 0: temp //= d
+            d += 1
+        if temp > 1: factors.append(temp)
+        for res in range(2, p):
+            ok = True
+            for f in factors:
+                if pow(res, phi // f, p) == 1:
+                    ok = False; break
+            if ok: roots.append(res)
+        return roots
+    p = n
+    while not is_prime(p): p += 1
+    roots = get_primitive_roots(p)
+    best_psl = float('inf'); best_seed = None; best_g = None
+    for g in roots:
+        s = np.ones(p)
+        for i in range(p):
+            val = (pow(i, g, p) + 1) % p
+            s[i] = 1 if (val == 0 or pow(val, (p - 1) // 2, p) == 1) else -1
+        cand = np.roll(s[:n], n // 4)
+        curr_psl = int(np.max(np.abs(np.round(np.real(np.fft.ifft(np.fft.fft(cand)*np.conj(np.fft.fft(cand)))))[1:n//2+1])))
+        if curr_psl < best_psl:
+            best_psl, best_seed, best_g = curr_psl, cand.astype(float), g
+    return best_seed, p, best_g, n // 4
+
+def run_pecan_lns():
+    n = int(input("Enter N: "))
+    seed, p, g, shift = get_best_weil_seed(n)
+    init_psl = int(np.max(np.abs(np.round(np.real(np.fft.ifft(np.fft.fft(seed)*np.conj(np.fft.fft(seed)))))[1:n//2+1])))
+    
+    curr = seed.copy(); best_s = seed.copy(); best_psl = init_psl; stagnation = 0
+    for i in range(1, 1001):
+        S = np.fft.fft(curr)
+        noise = (stagnation / 1000) * 0.1
+        S_ideal = (np.sqrt(n) + np.random.normal(0, noise, n)) * np.exp(1j * np.angle(S))
+        s_cont = np.real(np.fft.ifft(S_ideal))
+        cand = np.where(s_cont >= 0, 1.0, -1.0)
+        c_psl = int(np.max(np.abs(np.round(np.real(np.fft.ifft(np.fft.fft(cand)*np.conj(np.fft.fft(cand)))))[1:n//2+1])))
+        
+        if c_psl < best_psl:
+            best_psl, best_s, stagnation = c_psl, cand.copy(), 0
+            print(f"Iter {i} | PSL: {best_psl}")
+        else: stagnation += 1
+        
+        if stagnation > 100 and stagnation % 50 == 0:
+            cand[np.abs(s_cont) < np.percentile(np.abs(s_cont), 1)] *= -1
+        curr = cand
+
+    with open(f"PeCAN_Weil_N{n}.txt", "w") as f:
+        f.write(f"PECAN + LNS | N={n} | Prime={p} | Root={g}\nInitial PSL: {init_psl} | Final: {best_psl}\n")
+        s_str = "".join(['1' if x > 0 else '0' for x in seed])
+        for i in range(0, len(s_str), 100): f.write(s_str[i:i+100] + "\n")
+        f.write("\n--- OPTIMIZED ---\n")
+        b_str = "".join(['1' if x > 0 else '0' for x in best_s])
+        for i in range(0, len(b_str), 100): f.write(b_str[i:i+100] + "\n")
+    print(f"Saved: PeCAN_Weil_N{n}.txt")
+
+if __name__ == "__main__": run_pecan_lns()
+
+
+hybrid sa:
+
+import numpy as np
+import math
+import os
+
+def get_best_weil_seed(n):
+    # [Exactly same get_best_weil_seed logic as Method 1]
+    def is_prime(num):
+        if num < 2: return False
+        for i in range(2, int(num**0.5) + 1):
+            if num % i == 0: return False
+        return True
+    def get_primitive_roots(p):
+        roots = []; phi = p - 1; temp = phi; factors = []; d = 2
+        while d * d <= temp:
+            if temp % d == 0:
+                factors.append(d)
+                while temp % d == 0: temp //= d
+            d += 1
+        if temp > 1: factors.append(temp)
+        for res in range(2, p):
+            ok = True
+            for f in factors:
+                if pow(res, phi // f, p) == 1:
+                    ok = False; break
+            if ok: roots.append(res)
+        return roots
+    p = n
+    while not is_prime(p): p += 1
+    roots = get_primitive_roots(p)
+    best_psl = float('inf'); best_seed = None; best_g = None
+    for g in roots:
+        s = np.ones(p)
+        for i in range(p):
+            val = (pow(i, g, p) + 1) % p
+            s[i] = 1 if (val == 0 or pow(val, (p - 1) // 2, p) == 1) else -1
+        cand = np.roll(s[:n], n // 4)
+        curr_psl = int(np.max(np.abs(np.round(np.real(np.fft.ifft(np.fft.fft(cand)*np.conj(np.fft.fft(cand)))))[1:n//2+1])))
+        if curr_psl < best_psl:
+            best_psl, best_seed, best_g = curr_psl, cand.astype(float), g
+    return best_seed, p, best_g, n // 4
+
+def run_sa():
+    n = int(input("Enter N: "))
+    seed, p, g, shift = get_best_weil_seed(n)
+    init_psl = int(np.max(np.abs(np.round(np.real(np.fft.ifft(np.fft.fft(seed)*np.conj(np.fft.fft(seed)))))[1:n//2+1])))
+    
+    curr = seed.copy(); cur_psl = init_psl; best_s = seed.copy(); best_psl = init_psl; temp = 40.0
+    for i in range(20000):
+        new = curr.copy()
+        if np.random.rand() < 0.8: new[np.random.randint(n)] *= -1
+        else:
+            sz = np.random.randint(2, 8); st = np.random.randint(0, n-sz)
+            new[st:st+sz] *= -1
+        
+        n_psl = int(np.max(np.abs(np.round(np.real(np.fft.ifft(np.fft.fft(new)*np.conj(np.fft.fft(new)))))[1:n//2+1])))
+        if n_psl < cur_psl or np.random.rand() < math.exp((cur_psl - n_psl)/temp):
+            curr, cur_psl = new, n_psl
+            if cur_psl < best_psl:
+                best_psl, best_s = cur_psl, curr.copy()
+                print(f"Iter {i} | PSL: {best_psl}")
+        temp *= 0.9998
+
+    with open(f"SA_Weil_N{n}.txt", "w") as f:
+        f.write(f"HYBRID SA | N={n} | Prime={p} | Root={g}\nInitial PSL: {init_psl} | Final: {best_psl}\n")
+        s_str = "".join(['1' if x > 0 else '0' for x in seed])
+        for i in range(0, len(s_str), 100): f.write(s_str[i:i+100] + "\n")
+        f.write("\n--- OPTIMIZED ---\n")
+        b_str = "".join(['1' if x > 0 else '0' for x in best_s])
+        for i in range(0, len(b_str), 100): f.write(b_str[i:i+100] + "\n")
+    print(f"Saved: SA_Weil_N{n}.txt")
+
+if __name__ == "__main__": run_sa()
+
+gA:
+
+import numpy as np
+import os
+
+def get_best_weil_seed(n):
+    # [Exactly same get_best_weil_seed logic as Method 1]
+    def is_prime(num):
+        if num < 2: return False
+        for i in range(2, int(num**0.5) + 1):
+            if num % i == 0: return False
+        return True
+    def get_primitive_roots(p):
+        roots = []; phi = p - 1; temp = phi; factors = []; d = 2
+        while d * d <= temp:
+            if temp % d == 0:
+                factors.append(d)
+                while temp % d == 0: temp //= d
+            d += 1
+        if temp > 1: factors.append(temp)
+        for res in range(2, p):
+            ok = True
+            for f in factors:
+                if pow(res, phi // f, p) == 1:
+                    ok = False; break
+            if ok: roots.append(res)
+        return roots
+    p = n
+    while not is_prime(p): p += 1
+    roots = get_primitive_roots(p)
+    best_psl = float('inf'); best_seed = None; best_g = None
+    for g in roots:
+        s = np.ones(p)
+        for i in range(p):
+            val = (pow(i, g, p) + 1) % p
+            s[i] = 1 if (val == 0 or pow(val, (p - 1) // 2, p) == 1) else -1
+        cand = np.roll(s[:n], n // 4)
+        curr_psl = int(np.max(np.abs(np.round(np.real(np.fft.ifft(np.fft.fft(cand)*np.conj(np.fft.fft(cand)))))[1:n//2+1])))
+        if curr_psl < best_psl:
+            best_psl, best_seed, best_g = curr_psl, cand.astype(float), g
+    return best_seed, p, best_g, n // 4
+
+def run_ga():
+    n = int(input("Enter N: "))
+    seed, p, g, shift = get_best_weil_seed(n)
+    init_psl = int(np.max(np.abs(np.round(np.real(np.fft.ifft(np.fft.fft(seed)*np.conj(np.fft.fft(seed)))))[1:n//2+1])))
+    
+    pop = [np.roll(seed, i*5) for i in range(12)]
+    for gen in range(60):
+        pop.sort(key=lambda x: int(np.max(np.abs(np.round(np.real(np.fft.ifft(np.fft.fft(x)*np.conj(np.fft.fft(x)))))[1:n//2+1]))))
+        print(f"Gen {gen} | Top PSL: {int(np.max(np.abs(np.round(np.real(np.fft.ifft(np.fft.fft(pop[0])*np.conj(np.fft.fft(pop[0])))))[1:n//2+1])))}")
+        next_gen = pop[:2]
+        while len(next_gen) < 12:
+            p1, p2 = pop[0], pop[np.random.randint(1, 4)]
+            cp = np.random.randint(n)
+            child = np.concatenate([p1[:cp], p2[cp:]])
+            if np.random.rand() < 0.2: child[np.random.randint(n)] *= -1
+            next_gen.append(child)
+        pop = next_gen
+
+    final_psl = int(np.max(np.abs(np.round(np.real(np.fft.ifft(np.fft.fft(pop[0])*np.conj(np.fft.fft(pop[0])))))[1:n//2+1])))
+    with open(f"GA_Weil_N{n}.txt", "w") as f:
+        f.write(f"GA | N={n} | Prime={p} | Root={g}\nInitial PSL: {init_psl} | Final: {final_psl}\n")
+        s_str = "".join(['1' if x > 0 else '0' for x in seed])
+        for i in range(0, len(s_str), 100): f.write(s_str[i:i+100] + "\n")
+        f.write("\n--- OPTIMIZED ---\n")
+        b_str = "".join(['1' if x > 0 else '0' for x in pop[0]])
+        for i in range(0, len(b_str), 100): f.write(b_str[i:i+100] + "\n")
+    print(f"Saved: GA_Weil_N{n}.txt")
+
+if __name__ == "__main__": run_ga()

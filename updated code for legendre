@@ -1,0 +1,298 @@
+UPDATED CODES WITH ALL FOUR METHODS FOR LEGENDRE
+
+brest boskovic:
+
+import numpy as np
+import time
+import os
+
+def get_unified_seed(n):
+    p = n
+    while not all(p % i != 0 for i in range(2, int(p**0.5) + 1)): p += 1
+    s = np.ones(p)
+    for i in range(1, p):
+        if pow(i, (p - 1) // 2, p) != 1: s[i] = -1
+    seed = np.roll(s[:n], n // 4)
+    return seed.astype(float), p
+
+def write_wrapped_bits(f, seq):
+    bin_str = "".join(['1' if x > 0 else '0' for x in seq])
+    for i in range(0, len(bin_str), 100):
+        f.write(bin_str[i:i+100] + "\n")
+
+def run_brest_boskovic():
+    n = int(input("Enter N: ") or "1024")
+    initial_seq, p = get_unified_seed(n)
+    
+    f_init = np.fft.fft(initial_seq)
+    acf = np.round(np.real(np.fft.ifft(f_init * np.conj(f_init)))).astype(float)
+    init_psl = int(np.max(np.abs(acf[1:n//2+1])))
+    
+    seq = initial_seq.copy()
+    best_psl = init_psl
+    best_seq = seq.copy()
+    gamma = 4.0
+
+    print(f"Base Prime: {p} | Initial PSL: {init_psl}")
+
+    for step in range(1, 300001):
+        idx = np.random.randint(0, n)
+        diff = -2 * seq[idx]
+        indices_minus = (idx - np.arange(n)) % n
+        indices_plus = (idx + np.arange(n)) % n
+        delta = diff * (seq[indices_minus] + seq[indices_plus])
+        
+        sidelobes = slice(1, n // 2 + 1)
+        if np.sum(np.abs(acf[sidelobes] + delta[sidelobes])**gamma) < np.sum(np.abs(acf[sidelobes])**gamma):
+            seq[idx] *= -1
+            acf += delta
+            curr_psl = int(np.max(np.abs(acf[sidelobes])))
+            if curr_psl < best_psl:
+                best_psl = curr_psl
+                best_seq = seq.copy()
+                gamma = min(18, gamma + 0.1)
+                print(f"Step {step} | PSL: {best_psl}")
+
+    filename = f"BrestBoskovic_N{n}_PSL{best_psl}.txt"
+    with open(filename, "w") as f:
+        f.write(f"BREST-BOSKOVIC REPORT\nN: {n} | Base Prime: {p}\n")
+        f.write(f"Initial PSL: {init_psl} | Final PSL: {best_psl}\n\n")
+        f.write("--- INITIAL SEQUENCE ---\n")
+        write_wrapped_bits(f, initial_seq)
+        f.write("\n--- OPTIMIZED SEQUENCE ---\n")
+        write_wrapped_bits(f, best_seq)
+        f.flush(); os.fsync(f.fileno())
+    print(f"Saved: {filename}")
+
+if __name__ == "__main__": run_brest_boskovic()
+
+
+pecan+lns
+
+import numpy as np
+import os
+import time
+
+def get_unified_seed(n):
+    """Unified Seed: Search Up, Truncate, and Rotate n/4."""
+    p = n
+    while not all(p % i != 0 for i in range(2, int(p**0.5) + 1)): 
+        p += 1
+    s = np.ones(p)
+    for i in range(1, p):
+        if pow(i, (p - 1) // 2, p) != 1: 
+            s[i] = -1
+    # Truncate to N and apply the optimal Brest-Boskovic rotation
+    seed = np.roll(s[:n], n // 4)
+    return seed.astype(float), p
+
+def get_metrics(s):
+    """Fast Periodic ACF calculation."""
+    n = len(s)
+    S = np.fft.fft(s)
+    acf = np.real(np.fft.ifft(S * np.conj(S)))
+    rounded_acf = np.round(acf).astype(int)
+    # Check sidelobes up to N/2
+    psl = np.max(np.abs(rounded_acf[1:n//2+1]))
+    return psl, rounded_acf
+
+def write_wrapped_bits(f, seq):
+    """Writes bits in 100-character blocks for file integrity."""
+    bin_str = "".join(['1' if x == 1 else '0' for x in seq])
+    for i in range(0, len(bin_str), 100):
+        f.write(bin_str[i:i+100] + "\n")
+
+def run_pecan_lns(n_target):
+    # 1. Initialize with the Unified Seed (Matches other 3 methods)
+    initial_seq, prime_p = get_unified_seed(n_target)
+    init_psl, _ = get_metrics(initial_seq)
+    
+    print(f"\n[PHASE 1] Construction (Unified)")
+    print(f"Target Length: {n_target} | Base Prime Core (p): {prime_p}")
+    print(f"Initial PSL: {init_psl}")
+    
+    # 2. Optimization Loop (PeCAN + LNS)
+    current_s = initial_seq.copy()
+    best_s = initial_seq.copy()
+    best_psl = init_psl
+    
+    stagnation = 0
+    iteration = 0
+    print(f"\n[PHASE 2] PeCAN+LNS Optimizing...")
+    
+    try:
+        while stagnation < 1000:
+            iteration += 1
+            S = np.fft.fft(current_s)
+            
+            # --- PECAN CORE (Adaptive Spectral Shaping) ---
+            noise = (stagnation / 1000) * 0.1
+            target_mag = np.sqrt(n_target) + np.random.normal(0, noise, n_target)
+            S_ideal = target_mag * np.exp(1j * np.angle(S))
+            
+            s_cont = np.real(np.fft.ifft(S_ideal))
+            candidate_s = np.where(s_cont >= 0, 1.0, -1.0)
+            
+            curr_psl, _ = get_metrics(candidate_s)
+            
+            if curr_psl < best_psl:
+                best_psl = curr_psl
+                best_s = candidate_s.copy()
+                stagnation = 0
+                if iteration % 10 == 0:
+                    print(f"Iter {iteration}: New Best PSL = {best_psl}")
+            else:
+                stagnation += 1
+            
+            # --- LNS KICK (Local Neighborhood Search) ---
+            if stagnation > 200 and stagnation % 50 == 0:
+                # Flip bits with lowest confidence (nearest to zero)
+                uncertainty = np.abs(s_cont)
+                threshold = np.percentile(uncertainty, 1) 
+                candidate_s[uncertainty < threshold] *= -1
+            
+            current_s = candidate_s
+            
+    except KeyboardInterrupt:
+        print("\nUser stopped search.")
+
+    # 3. Final Reporting and Force-Write
+    filename = f"PeCAN_LNS_N{n_target}_PSL{best_psl}.txt"
+    with open(filename, "w") as f:
+        f.write("PECAN + LNS OPTIMIZATION REPORT\n")
+        f.write("="*50 + "\n")
+        f.write(f"Target Length: {n_target}\n")
+        f.write(f"Base Prime Used: {prime_p}\n")
+        f.write(f"Initial PSL (Unified Seed): {init_psl}\n")
+        f.write(f"Final Optimized PSL: {best_psl}\n")
+        f.write("="*50 + "\n\n")
+        
+        f.write("--- INITIAL SEQUENCE (Unified Legendre) ---\n")
+        write_wrapped_bits(f, initial_seq)
+        
+        f.write("\n--- FINAL OPTIMIZED SEQUENCE ---\n")
+        write_wrapped_bits(f, best_s)
+        
+        f.flush()
+        os.fsync(f.fileno())
+
+    print(f"\nDONE! Final PSL: {best_psl}")
+    print(f"Results saved to: {filename}")
+
+if __name__ == "__main__":
+    N = int(input("Enter target sequence length: ") or "1024")
+    run_pecan_lns(N)
+    
+hybrid sa
+
+import numpy as np
+import math
+import os
+
+def get_unified_seed(n):
+    p = n
+    while not all(p % i != 0 for i in range(2, int(p**0.5) + 1)): p += 1
+    s = np.ones(p)
+    for i in range(1, p):
+        if pow(i, (p - 1) // 2, p) != 1: s[i] = -1
+    return np.roll(s[:n], n // 4).astype(float), p
+
+def get_psl(x):
+    return int(np.max(np.abs(np.round(np.real(np.fft.ifft(np.fft.fft(x)*np.conj(np.fft.fft(x)))))[1:])))
+
+def write_wrapped_bits(f, seq):
+    bin_str = "".join(['1' if x > 0 else '0' for x in seq])
+    for i in range(0, len(bin_str), 100):
+        f.write(bin_str[i:i+100] + "\n")
+
+def run_hybrid_sa():
+    n = int(input("Enter N: ") or "1024")
+    initial_seq, p = get_unified_seed(n)
+    init_psl = get_psl(initial_seq)
+    
+    current, cur_psl = initial_seq.copy(), init_psl
+    best_s, best_psl = initial_seq.copy(), init_psl
+    temp = 45.0
+
+    for i in range(15000):
+        new = current.copy()
+        idx = np.random.randint(0, n, size=np.random.randint(1, 4))
+        new[idx] *= -1
+        new_psl = get_psl(new)
+        
+        if new_psl < cur_psl or np.random.rand() < math.exp((cur_psl - new_psl)/temp):
+            current, cur_psl = new, new_psl
+            if cur_psl < best_psl:
+                best_psl, best_s = cur_psl, current.copy()
+                print(f"SA Iter {i} | PSL: {best_psl}")
+        temp *= 0.9998
+
+    filename = f"HybridSA_N{n}_PSL{best_psl}.txt"
+    with open(filename, "w") as f:
+        f.write(f"HYBRID SA REPORT | N: {n} | Base Prime: {p}\n")
+        f.write(f"Initial PSL: {init_psl} | Final PSL: {best_psl}\n\n")
+        f.write("--- INITIAL SEQUENCE ---\n")
+        write_wrapped_bits(f, initial_seq)
+        f.write("\n--- OPTIMIZED SEQUENCE ---\n")
+        write_wrapped_bits(f, best_s)
+    print(f"Saved: {filename}")
+
+if __name__ == "__main__": run_hybrid_sa()
+
+
+ga:
+
+import numpy as np
+import os
+
+def get_unified_seed(n):
+    p = n
+    while not all(p % i != 0 for i in range(2, int(p**0.5) + 1)): p += 1
+    s = np.ones(p)
+    for i in range(1, p):
+        if pow(i, (p - 1) // 2, p) != 1: s[i] = -1
+    return np.roll(s[:n], n // 4).astype(float), p
+
+def get_psl(x):
+    return int(np.max(np.abs(np.round(np.real(np.fft.ifft(np.fft.fft(x)*np.conj(np.fft.fft(x)))))[1:])))
+
+def write_wrapped_bits(f, seq):
+    bin_str = "".join(['1' if x > 0 else '0' for x in seq])
+    for i in range(0, len(bin_str), 100):
+        f.write(bin_str[i:i+100] + "\n")
+
+def run_ga():
+    n = int(input("Enter N: ") or "1024")
+    initial_seed, p = get_unified_seed(n)
+    init_psl = get_psl(initial_seed)
+    
+    pop_size = 10
+    population = [np.roll(initial_seed, i * (n//pop_size)) for i in range(pop_size)]
+    
+    for gen in range(60):
+        population.sort(key=get_psl)
+        best_in_pop = population[0]
+        print(f"Gen {gen} | Top PSL: {get_psl(best_in_pop)}")
+        
+        next_gen = population[:2]
+        while len(next_gen) < pop_size:
+            p1, p2 = population[0], population[np.random.randint(1, 4)]
+            cp = np.random.randint(n)
+            child = np.concatenate([p1[:cp], p2[cp:]])
+            if np.random.rand() < 0.15: child[np.random.randint(n)] *= -1
+            next_gen.append(child)
+        population = next_gen
+
+    final_seq = population[0]
+    final_psl = get_psl(final_seq)
+    filename = f"GA_N{n}_PSL{final_psl}.txt"
+    with open(filename, "w") as f:
+        f.write(f"GA REPORT | N: {n} | Base Prime: {p}\n")
+        f.write(f"Initial Seed PSL: {init_psl} | Final PSL: {final_psl}\n\n")
+        f.write("--- INITIAL SEED SEQUENCE ---\n")
+        write_wrapped_bits(f, initial_seed)
+        f.write("\n--- OPTIMIZED SEQUENCE ---\n")
+        write_wrapped_bits(f, final_seq)
+    print(f"Saved: {filename}")
+
+if __name__ == "__main__": run_ga()
