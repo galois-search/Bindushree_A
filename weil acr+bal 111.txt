@@ -1,0 +1,485 @@
+"C:\Users\Dileep D\miniconda3\python.exe" D:\Dileep\Nidhi\weil_acr+balance.py 
+🚀 PURE GLOBAL WEIL OPTIMIZER
+• χ(i²+1) base → Fresh XOR windows S_k
+• Smart Balance: even(0-2) odd(1-3) → PSL → Protect
+=======================================================
+Enter sequence length N: 111
+🎯 Balance target: ≤3 (1-3 (odd))
+
+🔄 Computing base Legendre sequence...
+Prime p = 113
+Base Legendre sequence χ(i²+1) ready
+
+Global Weil range: k=0 to 56
+Start k (0-56): 0
+Stop k (0-56): 56
+
+🚀 Smart balance optimization: 57 shifts (≤3)
+📁 PureWeil_Balance_N111_p113_k_0-56.txt
+
+🔄 WEIL k=   0/56 (1/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 56ones(Bal=1)
+    → 56ones | Bal=1 | Flips=0
+  PSL    39→  11 | Bal   1→  1
+  BalFlips:    0 | Phase1:  1 |   1.5s
+  🏆 NEW BEST: k=0, PSL=11, Bal=1
+  ✅ Complete: 1.5s
+
+🔄 WEIL k=   1/56 (2/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 56ones(Bal=1)
+    → 56ones | Bal=1 | Flips=0
+  PSL    39→  11 | Bal   1→  3
+  BalFlips:    0 | Phase1:  1 |   1.5s
+  ✅ Complete: 1.5s
+
+🔄 WEIL k=   2/56 (3/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 56ones(Bal=1)
+    → 56ones | Bal=1 | Flips=0
+  PSL    39→  17 | Bal   1→  3
+  BalFlips:    0 | Phase1:  1 |   1.5s
+  ✅ Complete: 1.5s
+
+🔄 WEIL k=   3/56 (4/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 56ones(Bal=1)
+    → 56ones | Bal=1 | Flips=0
+  PSL    39→  15 | Bal   1→  3
+  BalFlips:    0 | Phase1:  1 |   1.5s
+  ✅ Complete: 1.5s
+
+🔄 WEIL k=   4/56 (5/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 57ones(Bal=2)
+    → 57ones | Bal=2 | Flips=0
+  PSL    43→   9 | Bal   2→  1
+  BalFlips:    0 | Phase1:  2 |   1.5s
+  🏆 NEW BEST: k=4, PSL=9, Bal=1
+  ✅ Complete: 1.5s
+
+🔄 WEIL k=   5/56 (6/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 58ones(Bal=3)
+    → 58ones | Bal=3 | Flips=0
+  PSL    47→  15 | Bal   3→  3
+  BalFlips:    0 | Phase1:  3 |   1.5s
+  ✅ Complete: 1.5s
+
+🔄 WEIL k=   6/56 (7/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 53ones(Bal=2)
+    → 53ones | Bal=2 | Flips=0
+  PSL    47→   9 | Bal   2→  3
+  BalFlips:    0 | Phase1:  2 |   1.5s
+  ✅ Complete: 1.5s
+
+🔄 WEIL k=   7/56 (8/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 53ones(Bal=2)
+    → 53ones | Bal=2 | Flips=0
+  PSL    47→  13 | Bal   2→  3
+  BalFlips:    0 | Phase1:  2 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=   8/56 (9/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 58ones(Bal=3)
+    → 58ones | Bal=3 | Flips=0
+  PSL    47→  25 | Bal   3→  3
+  BalFlips:    0 | Phase1:  3 |   1.5s
+  ✅ Complete: 1.5s
+
+🔄 WEIL k=   9/56 (10/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 58ones(Bal=3)
+    → 58ones | Bal=3 | Flips=0
+  PSL    47→  43 | Bal   3→  3
+  BalFlips:    0 | Phase1:  3 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  10/56 (11/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 53ones(Bal=2)
+    → 53ones | Bal=2 | Flips=0
+  PSL    47→   9 | Bal   2→  3
+  BalFlips:    0 | Phase1:  2 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  11/56 (12/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 53ones(Bal=2)
+    → 53ones | Bal=2 | Flips=0
+  PSL    47→  39 | Bal   2→  3
+  BalFlips:    0 | Phase1:  2 |   1.5s
+  ✅ Complete: 1.5s
+
+🔄 WEIL k=  12/56 (13/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 58ones(Bal=3)
+    → 58ones | Bal=3 | Flips=0
+  PSL    47→  13 | Bal   3→  3
+  BalFlips:    0 | Phase1:  3 |   1.5s
+  ✅ Complete: 1.5s
+
+🔄 WEIL k=  13/56 (14/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 54ones(Bal=1)
+    → 54ones | Bal=1 | Flips=0
+  PSL    43→  11 | Bal   1→  1
+  BalFlips:    0 | Phase1:  1 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  14/56 (15/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 58ones(Bal=3)
+    → 58ones | Bal=3 | Flips=0
+  PSL    39→   9 | Bal   3→  2
+  BalFlips:    0 | Phase1:  3 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  15/56 (16/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 58ones(Bal=3)
+    → 58ones | Bal=3 | Flips=0
+  PSL    39→  15 | Bal   3→  3
+  BalFlips:    0 | Phase1:  3 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  16/56 (17/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 53ones(Bal=2)
+    → 53ones | Bal=2 | Flips=0
+  PSL    39→   9 | Bal   2→  2
+  BalFlips:    0 | Phase1:  2 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  17/56 (18/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 59ones(Bal=4)
+    → 58ones | Bal=3 | Flips=1
+  PSL    35→  31 | Bal   4→  3
+  BalFlips:    1 | Phase1:  3 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  18/56 (19/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 53ones(Bal=2)
+    → 53ones | Bal=2 | Flips=0
+  PSL    35→  11 | Bal   2→  3
+  BalFlips:    0 | Phase1:  2 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  19/56 (20/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 59ones(Bal=4)
+    → 58ones | Bal=3 | Flips=1
+  PSL    35→   9 | Bal   4→  2
+  BalFlips:    1 | Phase1:  3 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  20/56 (21/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 59ones(Bal=4)
+    → 58ones | Bal=3 | Flips=1
+  PSL    35→   9 | Bal   4→  0
+  BalFlips:    1 | Phase1:  3 |   1.6s
+  🏆 NEW BEST: k=20, PSL=9, Bal=0
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  21/56 (22/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 52ones(Bal=3)
+    → 52ones | Bal=3 | Flips=0
+  PSL    35→  11 | Bal   3→  2
+  BalFlips:    0 | Phase1:  3 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  22/56 (23/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 52ones(Bal=3)
+    → 52ones | Bal=3 | Flips=0
+  PSL    35→  23 | Bal   3→  3
+  BalFlips:    0 | Phase1:  3 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  23/56 (24/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 53ones(Bal=2)
+    → 53ones | Bal=2 | Flips=0
+  PSL    33→  19 | Bal   2→  3
+  BalFlips:    0 | Phase1:  2 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  24/56 (25/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 54ones(Bal=1)
+    → 54ones | Bal=1 | Flips=0
+  PSL    31→   9 | Bal   1→  3
+  BalFlips:    0 | Phase1:  1 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  25/56 (26/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 55ones(Bal=0)
+    → 55ones | Bal=0 | Flips=0
+  PSL    35→   9 | Bal   0→  1
+  BalFlips:    0 | Phase1:  0 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  26/56 (27/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 56ones(Bal=1)
+    → 56ones | Bal=1 | Flips=0
+  PSL    35→   9 | Bal   1→  1
+  BalFlips:    0 | Phase1:  1 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  27/56 (28/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 56ones(Bal=1)
+    → 56ones | Bal=1 | Flips=0
+  PSL    35→  17 | Bal   1→  2
+  BalFlips:    0 | Phase1:  1 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  28/56 (29/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 56ones(Bal=1)
+    → 56ones | Bal=1 | Flips=0
+  PSL    35→  17 | Bal   1→  2
+  BalFlips:    0 | Phase1:  1 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  29/56 (30/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 56ones(Bal=1)
+    → 56ones | Bal=1 | Flips=0
+  PSL    35→   9 | Bal   1→  3
+  BalFlips:    0 | Phase1:  1 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  30/56 (31/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 55ones(Bal=0)
+    → 55ones | Bal=0 | Flips=0
+  PSL    35→  21 | Bal   0→  3
+  BalFlips:    0 | Phase1:  0 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  31/56 (32/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 55ones(Bal=0)
+    → 55ones | Bal=0 | Flips=0
+  PSL    35→   9 | Bal   0→  3
+  BalFlips:    0 | Phase1:  0 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  32/56 (33/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 56ones(Bal=1)
+    → 56ones | Bal=1 | Flips=0
+  PSL    31→  17 | Bal   1→  3
+  BalFlips:    0 | Phase1:  1 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  33/56 (34/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 55ones(Bal=0)
+    → 55ones | Bal=0 | Flips=0
+  PSL    31→  13 | Bal   0→  3
+  BalFlips:    0 | Phase1:  0 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  34/56 (35/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 55ones(Bal=0)
+    → 55ones | Bal=0 | Flips=0
+  PSL    31→  15 | Bal   0→  3
+  BalFlips:    0 | Phase1:  0 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  35/56 (36/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 56ones(Bal=1)
+    → 56ones | Bal=1 | Flips=0
+  PSL    31→  11 | Bal   1→  2
+  BalFlips:    0 | Phase1:  1 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  36/56 (37/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 57ones(Bal=2)
+    → 57ones | Bal=2 | Flips=0
+  PSL    31→  13 | Bal   2→  2
+  BalFlips:    0 | Phase1:  2 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  37/56 (38/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 58ones(Bal=3)
+    → 58ones | Bal=3 | Flips=0
+  PSL    31→  11 | Bal   3→  2
+  BalFlips:    0 | Phase1:  3 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  38/56 (39/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 53ones(Bal=2)
+    → 53ones | Bal=2 | Flips=0
+  PSL    31→  13 | Bal   2→  3
+  BalFlips:    0 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  39/56 (40/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 53ones(Bal=2)
+    → 53ones | Bal=2 | Flips=0
+  PSL    31→  13 | Bal   2→  3
+  BalFlips:    0 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  40/56 (41/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 58ones(Bal=3)
+    → 58ones | Bal=3 | Flips=0
+  PSL    31→  11 | Bal   3→  3
+  BalFlips:    0 | Phase1:  3 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  41/56 (42/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 58ones(Bal=3)
+    → 58ones | Bal=3 | Flips=0
+  PSL    31→  13 | Bal   3→  3
+  BalFlips:    0 | Phase1:  3 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  42/56 (43/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 53ones(Bal=2)
+    → 53ones | Bal=2 | Flips=0
+  PSL    31→  11 | Bal   2→  3
+  BalFlips:    0 | Phase1:  2 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  43/56 (44/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 53ones(Bal=2)
+    → 53ones | Bal=2 | Flips=0
+  PSL    31→  25 | Bal   2→  2
+  BalFlips:    0 | Phase1:  2 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  44/56 (45/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 54ones(Bal=1)
+    → 54ones | Bal=1 | Flips=0
+  PSL    31→  15 | Bal   1→  3
+  BalFlips:    0 | Phase1:  1 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  45/56 (46/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 57ones(Bal=2)
+    → 57ones | Bal=2 | Flips=0
+  PSL    31→   9 | Bal   2→  0
+  BalFlips:    0 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  46/56 (47/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 55ones(Bal=0)
+    → 55ones | Bal=0 | Flips=0
+  PSL    31→  15 | Bal   0→  3
+  BalFlips:    0 | Phase1:  0 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  47/56 (48/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 57ones(Bal=2)
+    → 57ones | Bal=2 | Flips=0
+  PSL    31→  13 | Bal   2→  2
+  BalFlips:    0 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  48/56 (49/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 55ones(Bal=0)
+    → 55ones | Bal=0 | Flips=0
+  PSL    33→   9 | Bal   0→  3
+  BalFlips:    0 | Phase1:  0 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  49/56 (50/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 55ones(Bal=0)
+    → 55ones | Bal=0 | Flips=0
+  PSL    33→   9 | Bal   0→  1
+  BalFlips:    0 | Phase1:  0 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  50/56 (51/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 56ones(Bal=1)
+    → 56ones | Bal=1 | Flips=0
+  PSL    33→  15 | Bal   1→  2
+  BalFlips:    0 | Phase1:  1 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  51/56 (52/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 55ones(Bal=0)
+    → 55ones | Bal=0 | Flips=0
+  PSL    33→  13 | Bal   0→  2
+  BalFlips:    0 | Phase1:  0 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  52/56 (53/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 55ones(Bal=0)
+    → 55ones | Bal=0 | Flips=0
+  PSL    33→  11 | Bal   0→  3
+  BalFlips:    0 | Phase1:  0 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  53/56 (54/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 56ones(Bal=1)
+    → 56ones | Bal=1 | Flips=0
+  PSL    33→   9 | Bal   1→  0
+  BalFlips:    0 | Phase1:  1 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  54/56 (55/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 56ones(Bal=1)
+    → 56ones | Bal=1 | Flips=0
+  PSL    37→   9 | Bal   1→  0
+  BalFlips:    0 | Phase1:  1 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  55/56 (56/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 56ones(Bal=1)
+    → 56ones | Bal=1 | Flips=0
+  PSL    37→  11 | Bal   1→  3
+  BalFlips:    0 | Phase1:  1 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=  56/56 (57/57)
+----------------------------------------------------------------------
+    Target: 55±1 (1-3 (odd)) | Start: 55ones(Bal=0)
+    → 55ones | Bal=0 | Flips=0
+  PSL    37→  17 | Bal   0→  2
+  BalFlips:    0 | Phase1:  0 |   1.6s
+  ✅ Complete: 1.6s
+
+==========================================================================================
+🏆 BEST PURE WEIL RESULT:
+  k=  20 | PSL=   9 | Balance=0
+📁 PureWeil_Balance_N111_p113_k_0-56.txt
+==========================================================================================
+
+Process finished with exit code 0

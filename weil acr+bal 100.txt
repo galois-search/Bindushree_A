@@ -1,0 +1,427 @@
+🔄 Computing base Legendre sequence...
+Prime p = 101
+Base Legendre sequence χ(i²+1) ready
+
+Global Weil range: k=0 to 50
+Start k (0-50): 0
+Stop k (0-50): 50
+
+🚀 Smart balance optimization: 51 shifts (≤2)
+📁 PureWeil_Balance_N100_p101_k_0-50.txt
+
+🔄 WEIL k=   0/50 (1/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 33ones(Bal=17)
+    → 48ones | Bal=2 | Flips=15
+  PSL    28→   8 | Bal  17→  1
+  BalFlips:   15 | Phase1:  2 |   1.7s
+  🏆 NEW BEST: k=0, PSL=8, Bal=1
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=   1/50 (2/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 67ones(Bal=17)
+    → 52ones | Bal=2 | Flips=15
+  PSL    28→   8 | Bal  17→  1
+  BalFlips:   15 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=   2/50 (3/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 68ones(Bal=18)
+    → 52ones | Bal=2 | Flips=16
+  PSL    28→   8 | Bal  18→  2
+  BalFlips:   16 | Phase1:  2 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=   3/50 (4/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 32ones(Bal=18)
+    → 48ones | Bal=2 | Flips=16
+  PSL    28→  12 | Bal  18→  1
+  BalFlips:   16 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=   4/50 (5/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 33ones(Bal=17)
+    → 48ones | Bal=2 | Flips=15
+  PSL    32→  12 | Bal  17→  2
+  BalFlips:   15 | Phase1:  2 |   1.6s
+  ✅ Complete: 1.6s
+
+🔄 WEIL k=   5/50 (6/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 67ones(Bal=17)
+    → 52ones | Bal=2 | Flips=15
+  PSL    20→  12 | Bal  17→  2
+  BalFlips:   15 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=   6/50 (7/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 68ones(Bal=18)
+    → 52ones | Bal=2 | Flips=16
+  PSL    24→  12 | Bal  18→  2
+  BalFlips:   16 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=   7/50 (8/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 32ones(Bal=18)
+    → 48ones | Bal=2 | Flips=16
+  PSL    28→  16 | Bal  18→  1
+  BalFlips:   16 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=   8/50 (9/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 33ones(Bal=17)
+    → 48ones | Bal=2 | Flips=15
+  PSL    20→  12 | Bal  17→  1
+  BalFlips:   15 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=   9/50 (10/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 67ones(Bal=17)
+    → 52ones | Bal=2 | Flips=15
+  PSL    24→   8 | Bal  17→  2
+  BalFlips:   15 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  10/50 (11/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 33ones(Bal=17)
+    → 48ones | Bal=2 | Flips=15
+  PSL    32→   8 | Bal  17→  2
+  BalFlips:   15 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  11/50 (12/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 67ones(Bal=17)
+    → 52ones | Bal=2 | Flips=15
+  PSL    24→   8 | Bal  17→  2
+  BalFlips:   15 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  12/50 (13/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 33ones(Bal=17)
+    → 48ones | Bal=2 | Flips=15
+  PSL    36→  32 | Bal  17→  0
+  BalFlips:   15 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  13/50 (14/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 34ones(Bal=16)
+    → 48ones | Bal=2 | Flips=14
+  PSL    20→  16 | Bal  16→  1
+  BalFlips:   14 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  14/50 (15/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 35ones(Bal=15)
+    → 48ones | Bal=2 | Flips=13
+  PSL    24→  24 | Bal  15→  2
+  BalFlips:   13 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  15/50 (16/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 65ones(Bal=15)
+    → 52ones | Bal=2 | Flips=13
+  PSL    28→  12 | Bal  15→  2
+  BalFlips:   13 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  16/50 (17/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 35ones(Bal=15)
+    → 48ones | Bal=2 | Flips=13
+  PSL    28→   8 | Bal  15→  2
+  BalFlips:   13 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  17/50 (18/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 36ones(Bal=14)
+    → 48ones | Bal=2 | Flips=12
+  PSL    28→  16 | Bal  14→  1
+  BalFlips:   12 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  18/50 (19/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 64ones(Bal=14)
+    → 52ones | Bal=2 | Flips=12
+  PSL    28→  20 | Bal  14→  2
+  BalFlips:   12 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  19/50 (20/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 36ones(Bal=14)
+    → 48ones | Bal=2 | Flips=12
+  PSL    20→   8 | Bal  14→  2
+  BalFlips:   12 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  20/50 (21/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 37ones(Bal=13)
+    → 48ones | Bal=2 | Flips=11
+  PSL    20→   8 | Bal  13→  2
+  BalFlips:   11 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  21/50 (22/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 38ones(Bal=12)
+    → 48ones | Bal=2 | Flips=10
+  PSL    32→  32 | Bal  12→  2
+  BalFlips:   10 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  22/50 (23/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 39ones(Bal=11)
+    → 48ones | Bal=2 | Flips=9
+  PSL    36→  12 | Bal  11→  1
+  BalFlips:    9 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  23/50 (24/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 61ones(Bal=11)
+    → 52ones | Bal=2 | Flips=9
+  PSL    24→  12 | Bal  11→  1
+  BalFlips:    9 | Phase1:  2 |   1.9s
+  ✅ Complete: 1.9s
+
+🔄 WEIL k=  24/50 (25/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 39ones(Bal=11)
+    → 48ones | Bal=2 | Flips=9
+  PSL    28→  12 | Bal  11→  1
+  BalFlips:    9 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  25/50 (26/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 40ones(Bal=10)
+    → 48ones | Bal=2 | Flips=8
+  PSL    28→  12 | Bal  10→  2
+  BalFlips:    8 | Phase1:  2 |   1.8s
+  ✅ Complete: 1.8s
+
+🔄 WEIL k=  26/50 (27/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 60ones(Bal=10)
+    → 52ones | Bal=2 | Flips=8
+  PSL    28→   8 | Bal  10→  2
+  BalFlips:    8 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  27/50 (28/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 40ones(Bal=10)
+    → 48ones | Bal=2 | Flips=8
+  PSL    28→   8 | Bal  10→  2
+  BalFlips:    8 | Phase1:  2 |   1.8s
+  ✅ Complete: 1.8s
+
+🔄 WEIL k=  28/50 (29/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 60ones(Bal=10)
+    → 52ones | Bal=2 | Flips=8
+  PSL    24→  12 | Bal  10→  1
+  BalFlips:    8 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  29/50 (30/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 40ones(Bal=10)
+    → 48ones | Bal=2 | Flips=8
+  PSL    28→  12 | Bal  10→  2
+  BalFlips:    8 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  30/50 (31/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 41ones(Bal=9)
+    → 48ones | Bal=2 | Flips=7
+  PSL    32→  24 | Bal   9→  2
+  BalFlips:    7 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  31/50 (32/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 42ones(Bal=8)
+    → 48ones | Bal=2 | Flips=6
+  PSL    24→  12 | Bal   8→  1
+  BalFlips:    6 | Phase1:  2 |   1.8s
+  ✅ Complete: 1.8s
+
+🔄 WEIL k=  32/50 (33/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 43ones(Bal=7)
+    → 48ones | Bal=2 | Flips=5
+  PSL    28→  12 | Bal   7→  2
+  BalFlips:    5 | Phase1:  2 |   1.8s
+  ✅ Complete: 1.8s
+
+🔄 WEIL k=  33/50 (34/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 44ones(Bal=6)
+    → 48ones | Bal=2 | Flips=4
+  PSL    32→  12 | Bal   6→  1
+  BalFlips:    4 | Phase1:  2 |   1.7s
+  ✅ Complete: 1.7s
+
+🔄 WEIL k=  34/50 (35/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 56ones(Bal=6)
+    → 52ones | Bal=2 | Flips=4
+  PSL    32→  12 | Bal   6→  2
+  BalFlips:    4 | Phase1:  2 |   2.1s
+  ✅ Complete: 2.1s
+
+🔄 WEIL k=  35/50 (36/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 57ones(Bal=7)
+    → 52ones | Bal=2 | Flips=5
+  PSL    24→   8 | Bal   7→  2
+  BalFlips:    5 | Phase1:  2 |   2.0s
+  ✅ Complete: 2.0s
+
+🔄 WEIL k=  36/50 (37/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 43ones(Bal=7)
+    → 48ones | Bal=2 | Flips=5
+  PSL    32→   8 | Bal   7→  1
+  BalFlips:    5 | Phase1:  2 |   2.2s
+  ✅ Complete: 2.2s
+
+🔄 WEIL k=  37/50 (38/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 57ones(Bal=7)
+    → 52ones | Bal=2 | Flips=5
+  PSL    24→  12 | Bal   7→  2
+  BalFlips:    5 | Phase1:  2 |   2.2s
+  ✅ Complete: 2.2s
+
+🔄 WEIL k=  38/50 (39/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 58ones(Bal=8)
+    → 52ones | Bal=2 | Flips=6
+  PSL    28→   8 | Bal   8→  2
+  BalFlips:    6 | Phase1:  2 |   2.3s
+  ✅ Complete: 2.3s
+
+🔄 WEIL k=  39/50 (40/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 42ones(Bal=8)
+    → 48ones | Bal=2 | Flips=6
+  PSL    28→   8 | Bal   8→  1
+  BalFlips:    6 | Phase1:  2 |   2.0s
+  ✅ Complete: 2.0s
+
+🔄 WEIL k=  40/50 (41/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 43ones(Bal=7)
+    → 48ones | Bal=2 | Flips=5
+  PSL    24→   8 | Bal   7→  1
+  BalFlips:    5 | Phase1:  2 |   2.1s
+  ✅ Complete: 2.1s
+
+🔄 WEIL k=  41/50 (42/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 44ones(Bal=6)
+    → 48ones | Bal=2 | Flips=4
+  PSL    24→  20 | Bal   6→  2
+  BalFlips:    4 | Phase1:  2 |   3.2s
+  ✅ Complete: 3.2s
+
+🔄 WEIL k=  42/50 (43/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 45ones(Bal=5)
+    → 48ones | Bal=2 | Flips=3
+  PSL    28→   8 | Bal   5→  2
+  BalFlips:    3 | Phase1:  2 |   2.3s
+  ✅ Complete: 2.3s
+
+🔄 WEIL k=  43/50 (44/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 46ones(Bal=4)
+    → 48ones | Bal=2 | Flips=2
+  PSL    32→   8 | Bal   4→  2
+  BalFlips:    2 | Phase1:  2 |   3.0s
+  ✅ Complete: 3.0s
+
+🔄 WEIL k=  44/50 (45/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 47ones(Bal=3)
+    → 48ones | Bal=2 | Flips=1
+  PSL    28→   8 | Bal   3→  1
+  BalFlips:    1 | Phase1:  2 |   2.2s
+  ✅ Complete: 2.2s
+
+🔄 WEIL k=  45/50 (46/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 48ones(Bal=2)
+    → 48ones | Bal=2 | Flips=0
+  PSL    28→  16 | Bal   2→  1
+  BalFlips:    0 | Phase1:  2 |   2.2s
+  ✅ Complete: 2.2s
+
+🔄 WEIL k=  46/50 (47/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 52ones(Bal=2)
+    → 52ones | Bal=2 | Flips=0
+  PSL    28→   8 | Bal   2→  2
+  BalFlips:    0 | Phase1:  2 |   2.2s
+  ✅ Complete: 2.2s
+
+🔄 WEIL k=  47/50 (48/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 48ones(Bal=2)
+    → 48ones | Bal=2 | Flips=0
+  PSL    28→   8 | Bal   2→  2
+  BalFlips:    0 | Phase1:  2 |   3.0s
+  ✅ Complete: 3.0s
+
+🔄 WEIL k=  48/50 (49/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 49ones(Bal=1)
+    → 49ones | Bal=1 | Flips=0
+  PSL    32→  12 | Bal   1→  2
+  BalFlips:    0 | Phase1:  1 |   2.5s
+  ✅ Complete: 2.5s
+
+🔄 WEIL k=  49/50 (50/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 50ones(Bal=0)
+    → 50ones | Bal=0 | Flips=0
+  PSL    28→  12 | Bal   0→  1
+  BalFlips:    0 | Phase1:  0 |   2.2s
+  ✅ Complete: 2.2s
+
+🔄 WEIL k=  50/50 (51/51)
+----------------------------------------------------------------------
+    Target: 50±1 (0-2 (even)) | Start: 50ones(Bal=0)
+    → 50ones | Bal=0 | Flips=0
+  PSL    28→  16 | Bal   0→  1
+  BalFlips:    0 | Phase1:  0 |   2.1s
+  ✅ Complete: 2.1s
+
+==========================================================================================
+🏆 BEST PURE WEIL RESULT:
+  k=   0 | PSL=   8 | Balance=1
+📁 PureWeil_Balance_N100_p101_k_0-50.txt
+==========================================================================================
+
+Process finished with exit code 0
