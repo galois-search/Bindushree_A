@@ -1,0 +1,150 @@
+import numpy as np
+import time
+from datetime import datetime
+
+def get_base_legendre_sequence(n):
+    def is_prime(num):
+        if num < 2: return False
+        for i in range(2, int(num ** 0.5) + 1):
+            if num % i == 0: return False
+        return True
+
+    def quadratic_character(x, p):
+        if x == 0: return 1
+        val = pow(x, (p - 1) // 2, p)
+        return 1 if val == 1 else -1
+
+    p = n
+    while not is_prime(p):
+        p += 1
+    base_chi = np.array([quadratic_character(i, p) for i in range(p)], dtype=float)
+    return base_chi, p
+
+def generate_pure_weil_shift(base_chi, p, n, k):
+    chi_shifted = np.roll(base_chi, k)
+    weil_seq = base_chi * chi_shifted
+    return weil_seq[:n].astype(float)
+
+def compute_psl(seq, n):
+    f_vec = np.fft.fft(seq)
+    autocorr = np.round(np.real(np.fft.ifft(f_vec * np.conj(f_vec)))).astype(float)
+    return int(np.max(np.abs(autocorr[1:n // 2 + 1])))
+
+def compute_balance(seq):
+    return int(np.abs(np.sum(seq)))
+
+def optimize_balance_initial(seq, n):
+    """Phase 1: Force sequence to ideal balance (0 for even, 1 for odd)"""
+    target = n % 2
+    current_sum = int(np.sum(seq))
+    
+    while abs(current_sum) > target:
+        if current_sum > target:
+            idx = np.random.choice(np.where(seq > 0)[0])
+            seq[idx] = -1
+            current_sum -= 2
+        else:
+            idx = np.random.choice(np.where(seq < 0)[0])
+            seq[idx] = 1
+            current_sum += 2
+    return seq
+
+def optimize_psl_brest_boskovic(seq, n, max_steps=200000):
+    """
+    Phase 2: Brest-Bošković with Pairwise Swaps & Gamma Ramping.
+    This maintains balance perfectly while driving PSL down.
+    """
+    best_seq = seq.copy()
+    
+    # Initialize Autocorrelation
+    f_vec = np.fft.fft(seq)
+    acf = np.round(np.real(np.fft.ifft(f_vec * np.conj(f_vec)))).astype(float)
+    best_psl = int(np.max(np.abs(acf[1:n // 2 + 1])))
+    
+    # Pre-calculate half-length for PSL check
+    sl = slice(1, n // 2 + 1)
+    
+    for step in range(max_steps):
+        # 1. Select one +1 and one -1 to swap (Balance Preservation)
+        pos_indices = np.where(seq > 0)[0]
+        neg_indices = np.where(seq < 0)[0]
+        i = np.random.choice(pos_indices)
+        j = np.random.choice(neg_indices)
+        
+        # 2. Calculate the combined delta for the swap
+        # Delta for flipping i (+1 -> -1): -2 * (s_{i-k} + s_{i+k})
+        # Delta for flipping j (-1 -> +1): +2 * (s_{j-k} + s_{j+k})
+        def get_flip_delta(idx, val_before):
+            diff = -2 * val_before
+            return diff * (seq[(idx - np.arange(n)) % n] + seq[(idx + np.arange(n)) % n])
+
+        delta_i = get_flip_delta(i, 1.0)
+        # Temporarily apply first flip to correctly calculate second delta
+        seq[i] = -1
+        delta_j = get_flip_delta(j, -1.0)
+        total_delta = delta_i + delta_j
+        
+        # 3. Brest-Bošković L-p norm logic
+        # Ramp Gamma from 2.0 (Energy) to 40.0 (Peak targeting)
+        gamma = 2.0 + (step / max_steps) * 38.0
+        
+        current_norm = np.sum(np.abs(acf[sl])**gamma)
+        new_norm = np.sum(np.abs(acf[sl] + total_delta[sl])**gamma)
+        
+        if new_norm < current_norm:
+            # Accept Move
+            acf += total_delta
+            seq[j] = 1
+            
+            curr_psl = int(np.max(np.abs(acf[sl])))
+            if curr_psl < best_psl:
+                best_psl = curr_psl
+                best_seq = seq.copy()
+                if best_psl < 100:
+                    print(f"  ✨ Target Reached! PSL: {best_psl} at step {step}")
+        else:
+            # Reject Move: Revert only the first flip
+            seq[i] = 1
+            
+        if step % 20000 == 0:
+            print(f"      Step {step:6d} | Gamma: {gamma:.1f} | Best PSL: {best_psl}")
+
+    return best_seq, best_psl
+
+def run_optimizer():
+    n = int(input("Enter N (e.g. 2000): "))
+    base_chi, p = get_base_legendre_sequence(n)
+    
+    start_k = int(input("Start k: "))
+    stop_k = int(input("Stop k: "))
+    
+    filename = f"ULTRA_Weil_N{n}_p{p}.txt"
+    
+    with open(filename, "w") as f:
+        f.write(f"Brest-Boskovic Pairwise Swap Optimization\nN={n}, p={p}\n{'='*60}\n")
+
+    for k in range(start_k, stop_k + 1):
+        print(f"\n🚀 Testing Weil Shift k={k}")
+        start_time = time.time()
+        
+        # Start with Pure Weil
+        seq = generate_pure_weil_shift(base_chi, p, n, k)
+        init_psl = compute_psl(seq, n)
+        
+        # Phase 1: Lock Balance
+        seq = optimize_balance_initial(seq, n)
+        
+        # Phase 2: Deep PSL Search
+        best_seq, final_psl = optimize_psl_brest_boskovic(seq, n, max_steps=300000)
+        
+        duration = time.time() - start_time
+        print(f"✅ Result k={k}: PSL {init_psl} -> {final_psl} ({duration:.1f}s)")
+        
+        # Save results
+        with open(filename, "a") as f:
+            f.write(f"k={k} | PSL: {final_psl} | Balance: {compute_balance(best_seq)} | Time: {duration:.1f}s\n")
+            s_str = "".join(['1' if x > 0 else '0' for x in best_seq])
+            f.write(s_str + "\n\n")
+
+if __name__ == "__main__":
+    run_optimizer()
